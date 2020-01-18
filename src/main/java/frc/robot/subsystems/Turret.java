@@ -1,0 +1,13 @@
+package frc.robot.subsystems;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Turret extends SubsystemBase {
+    // Instantiate Hardware
+
+    public Turret() {}
+
+    // Subsystem Functions
+    public void goToPos(double pos) {}
+    public void resetEncoders() {}
+}
