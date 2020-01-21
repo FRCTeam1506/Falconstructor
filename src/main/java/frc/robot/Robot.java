@@ -118,16 +118,15 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {}
 
   private void dashboardDrivetrain() {
-    SmartDashboard.putNumber("[Drivetrain] Left Encoder", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
-    SmartDashboard.putNumber("[Drivetrain] Right Encoder", RobotContainer.drivetrain.rightDriveMaster.getSelectedSensorPosition());
+    SmartDashboard.putNumber("[Drivetrain]-Left-Encoder", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
+    SmartDashboard.putNumber("[Drivetrain]-Right-Encoder", RobotContainer.drivetrain.rightDriveMaster.getSelectedSensorPosition());
   }
 
   private void dashboardShooter() {
-    SmartDashboard.putNumber("[Shooter] Power", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
+    SmartDashboard.putNumber("[Shooter]-Power", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
   }
 
   private void dashboardTurret() {
-    SmartDashboard.putNumber("[Turret] Encoder", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
+    SmartDashboard.putNumber("[Turret]-Encoder", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
   }
-
 }
