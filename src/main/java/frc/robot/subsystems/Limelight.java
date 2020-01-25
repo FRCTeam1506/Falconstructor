@@ -9,6 +9,7 @@ public class Limelight extends SubsystemBase {
 
     private Double x, y, area;
     private boolean targetFound;
+    private Integer pipeline;
 
     private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     // NetworkTableEntry tx = table.getEntry("tx");
@@ -26,6 +27,7 @@ public class Limelight extends SubsystemBase {
         this.y = table.getEntry("ty").getDouble(0.0);
         this.area = table.getEntry("ta").getDouble(0.0);
         this.targetFound = table.getEntry("tv").getNumber(0).intValue() == 1 ? true : false;
+        this.pipeline = table.getEntry("pipeline").getNumber(0).intValue();
     }
 
     public void setPipeline(int index) {

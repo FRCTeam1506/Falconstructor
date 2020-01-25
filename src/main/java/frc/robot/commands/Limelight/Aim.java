@@ -19,9 +19,7 @@ public class Aim extends CommandBase {
     @Override
     public void initialize() {
         if(limelight.getPipeline() != 5) {
-            System.out.println("Setting Pipline to 5");
             limelight.setPipeline(5);
-            System.out.println("Pipeline has been set to 5");
         }
     }
 
