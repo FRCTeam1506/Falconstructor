@@ -31,6 +31,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    System.out.println("Robot initializing ...");
+    RobotContainer.limelight.setPipeline(5);
     RobotContainer.drivetrain.resetEncoders();
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
@@ -135,6 +137,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("[Limelight]-X", RobotContainer.limelight.getX());
     SmartDashboard.putNumber("[Limelight]-Y", RobotContainer.limelight.getY());
     SmartDashboard.putNumber("[Limelight]-Area", RobotContainer.limelight.getArea());
+    SmartDashboard.putBoolean("[Limelight]-Target-Found", RobotContainer.limelight.isTargetFound());
   }
   
 }

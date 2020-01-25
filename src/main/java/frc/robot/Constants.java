@@ -26,6 +26,12 @@ public final class Constants {
         public static final String SIM_PATH = Filesystem.getLaunchDirectory().toString();
     }
 
+    public static final class Limelight {
+        public static final Double VARIATION = 1.0;
+        public static final Double CONVERSION = 0.03355;
+        public static final Double TUNE = 0.4;
+    }
+
     public static final class Drivetrain {
         public static final NamedID LEFT_DRIVE_MASTER_ID = new NamedID("Left-Drive-Master-ID", 10);
         public static final NamedID LEFT_DRIVE_ID = new NamedID("Left-Drive-ID", 13);

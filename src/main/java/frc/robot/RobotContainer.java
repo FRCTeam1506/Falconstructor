@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.Constants.Playstation;
 import frc.robot.commands.Drivetrain.LimitedArcadeDrive;
+import frc.robot.commands.Limelight.Aim;
+import frc.robot.commands.Auto.Nothing;
 import frc.robot.commands.Auto.TestDrive;
 import frc.robot.subsystems.*;
 
@@ -37,6 +39,8 @@ public class RobotContainer {
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   private final Command a_testDrive = new TestDrive(drivetrain);
+  private final Command l_aim = new Aim(drivetrain, limelight);
+  private final Command a_nothing = new Nothing();
 
   private Joystick driver = new Joystick(0);
 
@@ -63,10 +67,10 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // [Auto] Aim and Shoot
     // Reasoning -- X marks the spot
-    new JoystickButton(driver, Constants.Playstation.XButton.getID()).whenHeld(null);
+    new JoystickButton(driver, Constants.Playstation.XButton.getID()).whenHeld(l_aim);
     // [Auto] Ball Pickup
     // Reasoning -- Circle same shape as ball
-    new JoystickButton(driver, Constants.Playstation.CircleButton.getID()).whenHeld(null);
+    new JoystickButton(driver, Constants.Playstation.CircleButton.getID()).whileHeld(a_nothing);
   }
 
   private void setDefaultCommands() {
