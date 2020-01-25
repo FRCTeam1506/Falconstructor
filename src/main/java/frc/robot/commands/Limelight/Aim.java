@@ -31,7 +31,7 @@ public class Aim extends CommandBase {
             if(!((variation > -Constants.Limelight.VARIATION) && (variation < Constants.Limelight.VARIATION))) {
                 Double rot = variation * Constants.Limelight.CONVERSION;
                 System.out.println("Rot: " + rot);
-                drivetrain.arcadeDrive(0.0, -rot * Constants.Limelight.TUNE);
+                drivetrain.arcadeDrive(0.0, -rot * Constants.Limelight.LIMIT);
             }
         }
     }

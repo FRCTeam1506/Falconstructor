@@ -126,11 +126,11 @@ public class Robot extends TimedRobot {
   }
 
   private void dashboardShooter() {
-    SmartDashboard.putNumber("[Shooter]-Power", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
+    // SmartDashboard.putNumber("[Shooter]-Power", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
   }
 
   private void dashboardTurret() {
-    SmartDashboard.putNumber("[Turret]-Encoder", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
+    // SmartDashboard.putNumber("[Turret]-Encoder", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
   }
 
   private void dashboardLimelight() {

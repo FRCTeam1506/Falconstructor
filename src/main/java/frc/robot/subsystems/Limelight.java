@@ -47,7 +47,7 @@ public class Limelight extends SubsystemBase {
     }
 
     public int getPipeline() {
-        return this.table.getEntry("pipeline").getNumber(0).intValue();
+        return this.pipeline;
     }
 
     public boolean isTargetFound() {

@@ -29,7 +29,7 @@ public final class Constants {
     public static final class Limelight {
         public static final Double VARIATION = 1.0;
         public static final Double CONVERSION = 0.03355;
-        public static final Double TUNE = 0.4;
+        public static final Double LIMIT = 0.4;
     }
 
     public static final class Drivetrain {

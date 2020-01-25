@@ -35,6 +35,11 @@ public class Drivetrain extends SubsystemBase {
     public boolean isProfileFinished;
 
     public Drivetrain() {
+        this.leftDrive.configFactoryDefault();
+        this.leftDriveMaster.configFactoryDefault();
+        this.rightDrive.configFactoryDefault();
+        this.rightDriveMaster.configFactoryDefault();
+
         // Set followers
         this.leftDrive.follow(this.leftDriveMaster);
         this.rightDrive.follow(this.rightDriveMaster);

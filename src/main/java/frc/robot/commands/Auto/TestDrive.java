@@ -18,7 +18,7 @@ public class TestDrive extends CommandBase {
 
     @Override
     public void execute() {
-        System.out.println("Fwd then left auton running !!!");
+        System.out.println("Test auton running !!!");
         try {
             new ProfileFollowerUpdate(path + "_left.csv", path + "_right.csv");
         } catch (IOException e) {
