@@ -103,6 +103,7 @@ public class Robot extends TimedRobot {
     dashboardDrivetrain();
     dashboardShooter();
     dashboardTurret();
+    dashboardLimelight();
   }
 
   @Override
@@ -129,4 +130,11 @@ public class Robot extends TimedRobot {
   private void dashboardTurret() {
     SmartDashboard.putNumber("[Turret]-Encoder", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
   }
+
+  private void dashboardLimelight() {
+    SmartDashboard.putNumber("[Limelight]-X", RobotContainer.limelight.getX());
+    SmartDashboard.putNumber("[Limelight]-Y", RobotContainer.limelight.getY());
+    SmartDashboard.putNumber("[Limelight]-Area", RobotContainer.limelight.getArea());
+  }
+  
 }

@@ -32,6 +32,7 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public static final Drivetrain drivetrain = new Drivetrain();
+  public static final Limelight limelight = new Limelight();
 
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
