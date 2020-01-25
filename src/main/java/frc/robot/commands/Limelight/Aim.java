@@ -28,9 +28,7 @@ public class Aim extends CommandBase {
     @Override
     public void execute() {
         System.out.println("Executing ...");
-        System.out.println(limelight.isTargetFound());
         if(limelight.isTargetFound()) {
-            System.out.println("Made it ...");
             Double variation = limelight.getX();
             if(!((variation > -Constants.Limelight.VARIATION) && (variation < Constants.Limelight.VARIATION))) {
                 Double rot = variation * Constants.Limelight.CONVERSION;
