@@ -2,18 +2,18 @@ package frc.robot.commands.Limelight;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
 
-public class Aim extends CommandBase {
+public class Align extends CommandBase {
 
-    private final Turret turret;
+    private final Drivetrain drivetrain;
     private final Limelight limelight;
 
-    public Aim(Turret m_turret, Limelight m_limelight) {
-        turret = m_turret;
+    public Align(Drivetrain m_drivetrain, Limelight m_limelight) {
+        drivetrain = m_drivetrain;
         limelight = m_limelight;
-        addRequirements(turret, limelight);
+        addRequirements(drivetrain, limelight);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class Aim extends CommandBase {
             if(!((variation > -Constants.Limelight.VARIATION) && (variation < Constants.Limelight.VARIATION))) {
                 Double rot = variation * Constants.Limelight.CONVERSION;
                 System.out.println("Rot: " + rot);
-                // turret.goToPos(pos);
+                drivetrain.arcadeDrive(0.0, -rot * Constants.Limelight.LIMIT);
             }
         }
     }

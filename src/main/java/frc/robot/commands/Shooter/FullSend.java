@@ -1,7 +1,6 @@
 package frc.robot.commands.Shooter;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
 public class FullSend extends CommandBase {
@@ -15,6 +14,6 @@ public class FullSend extends CommandBase {
 
     @Override
     public void execute() {
-        m_shooter.shoot(Constants.Shooter.FULL_SEND_SPEED);
+        m_shooter.fullSend();
     }
 }

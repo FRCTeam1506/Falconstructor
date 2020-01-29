@@ -19,7 +19,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.Constants.Playstation;
 import frc.robot.commands.Drivetrain.LimitedArcadeDrive;
-import frc.robot.commands.Limelight.Aim;
+import frc.robot.commands.Limelight.Align;
+import frc.robot.commands.Shooter.FullSend;
+import frc.robot.commands.Shooter.Shoot;
 import frc.robot.commands.Auto.Nothing;
 import frc.robot.commands.Auto.TestDrive;
 import frc.robot.subsystems.*;
@@ -35,12 +37,14 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public static final Drivetrain drivetrain = new Drivetrain();
   public static final Limelight limelight = new Limelight();
+  public static final Shooter shooter = new Shooter();
 
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   private final Command a_testDrive = new TestDrive(drivetrain);
-  private final Command l_aim = new Aim(drivetrain, limelight);
+  private final Command l_align = new Align(drivetrain, limelight);
   private final Command a_nothing = new Nothing();
+  private final Command s_fullSend = new FullSend(shooter);
 
   private Joystick driver = new Joystick(0);
 
@@ -67,10 +71,12 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // [Auto] Aim and Shoot
     // Reasoning -- X marks the spot
-    new JoystickButton(driver, Constants.Playstation.XButton.getID()).whenHeld(l_aim);
+    new JoystickButton(driver, Constants.Playstation.XButton.getID()).whenHeld(l_align);
     // [Auto] Ball Pickup
     // Reasoning -- Circle same shape as ball
     new JoystickButton(driver, Constants.Playstation.CircleButton.getID()).whileHeld(a_nothing);
+    // [Shooter] Shoot Ball
+    new JoystickButton(driver, Constants.Playstation.RightBumper.getID()).whileHeld(s_fullSend);
   }
 
   private void setDefaultCommands() {
@@ -79,6 +85,13 @@ public class RobotContainer {
         drivetrain,
         () -> driver.getRawAxis(Playstation.LeftYAxis.getID()),
         () -> driver.getRawAxis(Playstation.RightXAxis.getID())
+      )
+    );
+
+    shooter.setDefaultCommand(
+      new Shoot(
+        shooter,
+        () -> driver.getRawAxis(Playstation.RightTrigger.getID())
       )
     );
   }

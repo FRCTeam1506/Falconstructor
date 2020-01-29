@@ -41,6 +41,8 @@ public final class Constants {
     public static final class Turret {}
     public static final class Intake {}
     public static final class Shooter {
+        public static final NamedID SHOOTER_1_ID = new NamedID("Shooter-1-ID", 14);
+        public static final NamedID SHOOTER_2_ID = new NamedID("Shooter-2-ID", 15);
         public static final Double FULL_SEND_SPEED = 1.0;
     }
 
