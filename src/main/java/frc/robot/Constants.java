@@ -38,7 +38,9 @@ public final class Constants {
         public static final NamedID RIGHT_DRIVE_MASTER_ID = new NamedID("Right-Drive-Master-ID", 12);
         public static final NamedID RIGHT_DRIVE_ID = new NamedID("Right-Drive-ID", 11);
     }
-    public static final class Turret {}
+    public static final class Turret {
+        public static final NamedID TURRET_ID = new NamedID("Turret-ID", 16);
+    }
     public static final class Intake {}
     public static final class Shooter {
         public static final NamedID SHOOTER_1_ID = new NamedID("Shooter-1-ID", 14);

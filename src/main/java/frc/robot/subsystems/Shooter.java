@@ -22,11 +22,11 @@ public class Shooter extends SubsystemBase {
 
     // Subsystem Functions
     public void shoot(Double pwr) {
-        shooter1.set(ControlMode.PercentOutput, pwr);
-        shooter2.set(ControlMode.PercentOutput, pwr);
+        this.shooter1.set(ControlMode.PercentOutput, pwr);
+        this.shooter2.set(ControlMode.PercentOutput, pwr);
     }
     public void fullSend() {
-        shooter1.set(ControlMode.PercentOutput, 1);
-        shooter2.set(ControlMode.PercentOutput, 1);
+        this.shooter1.set(ControlMode.PercentOutput, 1);
+        this.shooter2.set(ControlMode.PercentOutput, 1);
     }
 }
