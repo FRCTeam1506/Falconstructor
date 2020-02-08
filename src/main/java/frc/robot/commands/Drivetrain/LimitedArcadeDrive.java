@@ -32,6 +32,6 @@ public class LimitedArcadeDrive extends CommandBase {
 
   @Override
   public void execute() {
-    m_drive.limitedArcadeDrive(m_forward.getAsDouble(), m_rotation.getAsDouble());
+    m_drive.limitedArcadeDrive(m_forward.getAsDouble(), -m_rotation.getAsDouble());
   }
 }

@@ -11,7 +11,7 @@ import frc.robot.subsystems.Drivetrain;;
  * explicitly for pedagogical purposes - actual code should inline a command this simple with {@link
  * edu.wpi.first.wpilibj2.command.RunCommand}.
  */
-public class ArcadeDrive extends CommandBase {
+public class FastArcadeDrive extends CommandBase {
   private final Drivetrain m_drive;
   private final DoubleSupplier m_forward;
   private final DoubleSupplier m_rotation;
@@ -23,8 +23,7 @@ public class ArcadeDrive extends CommandBase {
    * @param forward The control input for driving forwards/backwards
    * @param rotation The control input for turning
    */
-
-  public ArcadeDrive(Drivetrain subsystem, DoubleSupplier forward, DoubleSupplier rotation) {
+  public FastArcadeDrive(Drivetrain subsystem, DoubleSupplier forward, DoubleSupplier rotation) {
     m_drive = subsystem;
     m_forward = forward;
     m_rotation = rotation;
@@ -33,6 +32,6 @@ public class ArcadeDrive extends CommandBase {
 
   @Override
   public void execute() {
-    m_drive.arcadeDrive(m_forward.getAsDouble(), m_rotation.getAsDouble());
+    m_drive.arcadeDrive(m_forward.getAsDouble(), -m_rotation.getAsDouble());
   }
 }

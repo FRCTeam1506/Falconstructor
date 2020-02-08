@@ -71,6 +71,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     RobotContainer.drivetrain.resetEncoders();
+    RobotContainer.drivetrain.resetGyro();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand(); 
     // m_robotContainer.getAutonomousCommand();
 
@@ -126,7 +127,9 @@ public class Robot extends TimedRobot {
   }
 
   private void dashboardShooter() {
-    // SmartDashboard.putNumber("[Shooter]-Power", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
+    SmartDashboard.putNumber("[Shooter]-Power", RobotContainer.shooter.shooter1.getMotorOutputPercent());
+    SmartDashboard.putNumber("[Shooter]-Velocity", RobotContainer.shooter.shooter1.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("[Shooter]-Error", RobotContainer.shooter.shooter1.getClosedLoopError());
   }
 
   private void dashboardTurret() {
@@ -138,6 +141,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("[Limelight]-Y", RobotContainer.limelight.getY());
     SmartDashboard.putNumber("[Limelight]-Area", RobotContainer.limelight.getArea());
     SmartDashboard.putBoolean("[Limelight]-Target-Found", RobotContainer.limelight.isTargetFound());
+    SmartDashboard.putNumber("[Limelight]-Distance", RobotContainer.limelight.getDistance());
   }
   
 }

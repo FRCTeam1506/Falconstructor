@@ -28,7 +28,7 @@ public class Aim extends CommandBase {
         System.out.println("Executing ...");
         if(limelight.isTargetFound()) {
             Double variation = limelight.getX();
-            if(!((variation > -Constants.Limelight.VARIATION) && (variation < Constants.Limelight.VARIATION))) {
+            if(!((variation > -Constants.Limelight.THRESHOLD) && (variation < Constants.Limelight.THRESHOLD))) {
                 Double rot = variation * Constants.Limelight.CONVERSION;
                 System.out.println("Rot: " + rot);
                 // turret.goToPos(pos);

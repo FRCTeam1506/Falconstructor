@@ -8,22 +8,34 @@
 package frc.robot;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
-import frc.robot.Constants.Playstation;
-import frc.robot.commands.Drivetrain.LimitedArcadeDrive;
+import frc.robot.commands.Intake.IntakeIntake;
 import frc.robot.commands.Limelight.Align;
+import frc.robot.commands.Limelight.Idle;
+import frc.robot.commands.Macros.AimAndShoot;
+import frc.robot.commands.Macros.IntakeAndShoot;
 import frc.robot.commands.Shooter.FullSend;
 import frc.robot.commands.Shooter.Shoot;
 import frc.robot.commands.Auto.Nothing;
-import frc.robot.commands.Auto.TestDrive;
+import frc.robot.commands.Drivetrain.FastArcadeDrive;
+import frc.robot.commands.Drivetrain.LimitedArcadeDrive;
 import frc.robot.subsystems.*;
 
 /**
@@ -34,19 +46,24 @@ import frc.robot.subsystems.*;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+  public static boolean aligned;
   // The robot's subsystems and commands are defined here...
   public static final Drivetrain drivetrain = new Drivetrain();
   public static final Limelight limelight = new Limelight();
   public static final Shooter shooter = new Shooter();
+  public static final Intake intake = new Intake();
 
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
-  private final Command a_testDrive = new TestDrive(drivetrain);
   private final Command l_align = new Align(drivetrain, limelight);
+  private final Command l_idle = new Idle(drivetrain, limelight);
   private final Command a_nothing = new Nothing();
   private final Command s_fullSend = new FullSend(shooter);
+  private final Command m_intakeAndShoot = new IntakeAndShoot(intake, shooter);
+  private final Command m_aimAndShoot = new AimAndShoot(drivetrain, limelight, intake, shooter);
 
-  private Joystick driver = new Joystick(0);
+  public static Joystick driver = new Joystick(0);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -54,12 +71,27 @@ public class RobotContainer {
    */
 
   public RobotContainer() {
+    // Create list of paths
+    createPathsList();
     // Configure the button bindings
     configureButtonBindings();
     // Set default commands
     setDefaultCommands();
     // Set Auton Configuration
     setAutoConfig();
+  }
+
+  public static void setAlign(boolean value) {
+    aligned = value;
+  }
+
+  public static boolean getAlign() {
+    return aligned;
+  }
+ 
+  private void createPathsList() {
+    // paths.put("A", new RamseteCommand(, pose, controller, feedforward, kinematics, wheelSpeeds, leftController, rightController, outputVolts, requirements));
+    // paths.put("B", new RamseteCommand(trajectory, pose, controller, feedforward, kinematics, wheelSpeeds, leftController, rightController, outputVolts, requirements));
   }
 
   /**
@@ -69,38 +101,60 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // [Auto] Aim and Shoot
+    // new JoystickButton(driver, Constants.Playstation.LeftBumper.getID()).whileHeld(
+    //   new FastArcadeDrive(
+    //     drivetrain,
+    //     () -> driver.getRawAxis(Constants.Playstation.LeftYAxis.getID()),
+    //     () -> driver.getRawAxis(Constants.Playstation.RightXAxis.getID())
+    //   )
+    // );
+
+    // [Auto] Aim
     // Reasoning -- X marks the spot
-    new JoystickButton(driver, Constants.Playstation.XButton.getID()).whenHeld(l_align);
+    new JoystickButton(driver, Constants.Playstation.XButton.getID())
+      .whenPressed(l_align)
+      .whenReleased(l_idle);
     // [Auto] Ball Pickup
     // Reasoning -- Circle same shape as ball
     new JoystickButton(driver, Constants.Playstation.CircleButton.getID()).whileHeld(a_nothing);
     // [Shooter] Shoot Ball
     new JoystickButton(driver, Constants.Playstation.RightBumper.getID()).whileHeld(s_fullSend);
+    // [Macro] Intake and Shoot
+    new JoystickButton(driver, Constants.Playstation.TriangleButton.getID()).whenHeld(m_intakeAndShoot);
+    // [Macro] Aim and Shoot
+    new JoystickButton(driver, Constants.Playstation.SquareButton.getID()).whenHeld(m_aimAndShoot);
   }
 
   private void setDefaultCommands() {
     drivetrain.setDefaultCommand(
-      new LimitedArcadeDrive (
+      new LimitedArcadeDrive(
         drivetrain,
-        () -> driver.getRawAxis(Playstation.LeftYAxis.getID()),
-        () -> driver.getRawAxis(Playstation.RightXAxis.getID())
+        () -> driver.getRawAxis(Constants.Playstation.LeftYAxis.getID()),
+        () -> driver.getRawAxis(Constants.Playstation.RightXAxis.getID())
       )
     );
 
     shooter.setDefaultCommand(
       new Shoot(
         shooter,
-        () -> driver.getRawAxis(Playstation.RightTrigger.getID())
+        // () -> driver.getRawAxis(Playstation.RightYAxis.getID())
+        () -> 0.0
+      )
+    );
+
+    intake.setDefaultCommand(
+      new IntakeIntake(
+        intake,
+        () -> (driver.getRawAxis(Constants.Playstation.RightTrigger.getID()) + 1.0) * -1.0
       )
     );
   }
 
   private void setAutoConfig() {
-    // autoChooser.setDefaultOption("DRIVE fwd - TURN left", new FwdThenLeft(drivetrain));
-    autoChooser.setDefaultOption("Test Drive", a_testDrive);
+    // RamseteCommand ramseteCommand = new RamseteCommand(trajectory, pose, controller, feedforward, kinematics, wheelSpeeds, leftController, rightController, outputVolts, requirements);
+	// autoChooser.setDefaultOption("DRIVE fwd - TURN left", new FwdThenLeft(drivetrain));
+	  autoChooser.setDefaultOption("1auto", null);
     autoChooser.addOption("Safe", null);
-    autoChooser.addOption("Ambitious", null);
     autoChooser.addOption("Aim and Shoot", null);
     Shuffleboard.getTab("Autonomous").add(autoChooser);
   }
@@ -110,7 +164,53 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+  // public Command getAutonomousCommand() {
+  //   return autoChooser.getSelected();
+  // }
+
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    String trajectoryJSON = "output/";
+    Trajectory trajectory = null;
+    String choice = autoChooser.getSelected().toString();
+
+    switch (choice) {
+      case "1auto":
+        trajectoryJSON += choice+".wpilib.json";
+        try {
+          	Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+            trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+        } catch (IOException ex) {
+          	DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+        }
+        break;
+    
+      default:
+        trajectoryJSON += choice+".wpilib.json";
+        try {
+          	Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+          	trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+        } catch (IOException ex) {
+          	DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+        }
+        break;
+    }
+
+    RamseteCommand ramseteCommand = new RamseteCommand(
+        trajectory,
+        drivetrain::getPose, 
+        new RamseteController(2.0, 0.7), 
+        new SimpleMotorFeedforward(
+            Constants.Drivetrain.kS,
+            Constants.Drivetrain.kV,
+            Constants.Drivetrain.kA
+        ), 
+        Constants.Drivetrain.kDriveKinematics, 
+        drivetrain::getWheelSpeeds, 
+        new PIDController(3.0, 0.0, 0.0), 
+        new PIDController(3.0, 0.0, 0.0), 
+        drivetrain::tankDrive, 
+        drivetrain
+    );
+    return ramseteCommand.andThen(() -> drivetrain.tankDrive(0,0));
   }
 }
