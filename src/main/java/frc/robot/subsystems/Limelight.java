@@ -8,7 +8,7 @@ import frc.robot.Constants;
 public class Limelight extends SubsystemBase {
 
     public boolean aligned, isRefreshed;
-    private Double x, y, area, previousX;
+    private Double x, y, area, previousX, previousY;
     private boolean targetFound;
     private Integer pipeline;
 
@@ -29,8 +29,9 @@ public class Limelight extends SubsystemBase {
         this.targetFound = table.getEntry("tv").getNumber(0).intValue() == 1 ? true : false;
         this.pipeline = table.getEntry("pipeline").getNumber(0).intValue();
         this.aligned = Math.abs(x) < Constants.Limelight.THRESHOLD ? true : false;
-        this.isRefreshed = this.x != previousX ? true : false;
+        this.isRefreshed = this.x != previousX || this.y != previousY ? true : false;
         this.previousX = this.x;
+        this.previousY = this.y;
         // if(Math.abs(x) < Constants.Limelight.THRESHOLD) this.aligned = true;
         // else this.aligned = false;
     }

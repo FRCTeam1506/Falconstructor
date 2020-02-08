@@ -9,10 +9,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.commands.Drivetrain.ArcadeDrive;
-import frc.robot.commands.Drivetrain.FastArcadeDrive;
-import frc.robot.commands.Drivetrain.LimitedArcadeDrive;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -75,6 +71,7 @@ public class Drivetrain extends SubsystemBase {
             getLeftDistanceMeters(), 
             getRightDistanceMeters()
         );
+        this.targetHeading = getHeading();
     }
 
     public void drive(double leftPower, double rightPower) {

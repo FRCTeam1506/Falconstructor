@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import com.fasterxml.jackson.databind.util.Named;
+
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
@@ -78,6 +80,9 @@ public final class Constants {
     public static final class Turret {
         public static final NamedID TURRET_ID = new NamedID("Turret-ID", 17);
     }
+    public static final class Indexer {
+        public static final NamedID INDEXER_ID = new NamedID("Indexer-ID", 8);
+    }
     public static final class Intake {
         public static final NamedID INTAKE_ID = new NamedID("Intake-ID", 6);
     }
@@ -85,10 +90,10 @@ public final class Constants {
         public static final NamedID SHOOTER_1_ID = new NamedID("Shooter-1-ID", 14);
         public static final NamedID SHOOTER_2_ID = new NamedID("Shooter-2-ID", 15);
         public static final Double FULL_SEND_SPEED = 1.0;
-        public static final Double kP = 0.035;
+        public static final Double kP = 0.037; // 0.037
         public static final Double kI = 0.0;
         public static final Double kD = 0.0;
-        public static final Double kF = 0.06;
+        public static final Double kF = 0.049; // 0.06
     }
 
     public static final class Playstation {

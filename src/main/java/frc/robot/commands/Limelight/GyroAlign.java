@@ -24,6 +24,8 @@ public class GyroAlign extends CommandBase {
             double targetHeading = currentHeading + 100.0 / 2.0; // pixels / degrees
             m_drivetrain.setTargetHeading(targetHeading);
         }
+        double headingError = m_drivetrain.getTargetHeading() - currentHeading;
+        m_drivetrain.arcadeDrive(0.0, -0.01 * headingError);
     }
 
 }

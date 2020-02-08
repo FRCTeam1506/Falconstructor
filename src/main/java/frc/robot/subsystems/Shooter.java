@@ -73,12 +73,13 @@ public class Shooter extends SubsystemBase {
         // this.shooter2.set(ControlMode.PercentOutput, -0.85);
         // this.shooter1.set(ControlMode.Velocity, -22200); // -21600 -19800
         // this.shooter2.set(ControlMode.Velocity, -22200);
-        if(targetVelocity > -22200.0) {
-            targetVelocity += -1000.0;
-        } else {
-            targetVelocity = -22200.0;
-        }
-        this.setVelocity(targetVelocity);
+        // if(targetVelocity > -22200.0) {
+        //     targetVelocity += -10000.0;
+        // } else {
+        //     targetVelocity = -22200.0;
+        // }
+        // this.setVelocity(targetVelocity);
+        this.setVelocity(-18500.0);
     }
 
     public void fullSend2() {
@@ -86,7 +87,7 @@ public class Shooter extends SubsystemBase {
         // this.shooter2.set(ControlMode.PercentOutput, -0.85);
         // this.shooter1.set(ControlMode.Velocity, -38420);
         // this.shooter2.set(ControlMode.Velocity, -38420);
-        this.setVelocity(-33333.0);
+        this.setVelocity(-22200.0);
     }
 
     public void shootBasedOnDistance(Double distance) {

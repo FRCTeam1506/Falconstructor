@@ -36,6 +36,7 @@ import frc.robot.commands.Shooter.Shoot;
 import frc.robot.commands.Auto.Nothing;
 import frc.robot.commands.Drivetrain.FastArcadeDrive;
 import frc.robot.commands.Drivetrain.LimitedArcadeDrive;
+import frc.robot.commands.Indexer.Index;
 import frc.robot.subsystems.*;
 
 /**
@@ -53,6 +54,7 @@ public class RobotContainer {
   public static final Limelight limelight = new Limelight();
   public static final Shooter shooter = new Shooter();
   public static final Intake intake = new Intake();
+  public static final Indexer indexer = new Indexer();
 
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -60,8 +62,8 @@ public class RobotContainer {
   private final Command l_idle = new Idle(drivetrain, limelight);
   private final Command a_nothing = new Nothing();
   private final Command s_fullSend = new FullSend(shooter);
-  private final Command m_intakeAndShoot = new IntakeAndShoot(intake, shooter);
-  private final Command m_aimAndShoot = new AimAndShoot(drivetrain, limelight, intake, shooter);
+  private final Command m_intakeAndShoot = new IntakeAndShoot(intake, indexer, shooter);
+  private final Command m_aimAndShoot = new AimAndShoot(drivetrain, limelight, indexer, intake, shooter);
 
   public static Joystick driver = new Joystick(0);
 
