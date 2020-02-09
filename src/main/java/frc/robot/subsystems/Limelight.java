@@ -9,7 +9,7 @@ import frc.robot.Constants;
 public class Limelight extends SubsystemBase {
 
     public boolean aligned, isRefreshed;
-    private Double x, y, area, previousX, previousY;
+    private Double x, y, area, targetDistance ,previousX, previousY;
     private boolean targetFound;
     private Integer pipeline;
 
@@ -20,7 +20,9 @@ public class Limelight extends SubsystemBase {
         FarTargeting
     }
 
-    public Limelight() {}
+    public Limelight() {
+        this.targetDistance = 1234.0;
+    }
 
     public void setPipeline(int index) {
         this.table.getEntry("pipeline").setNumber(index);
@@ -40,6 +42,10 @@ public class Limelight extends SubsystemBase {
                 this.setPipeline(5);
                 break;
         }
+    }
+
+    public void setTargetDistance(Double distance) {
+        this.targetDistance = distance;
     }
 
     public Double getX() {
@@ -66,9 +72,14 @@ public class Limelight extends SubsystemBase {
         // inches
         Double h2 = 96.0;
         Double h1 = 30.0;
-        Double a1 = 0.0;
+        Double a1 = 0.258;
         Double a2 = this.y;
-        return (h2 - h1) / Math.tan(a1 + a2);
+        // return (h2 - h1) / Math.tan(a1 + a2);
+        return (h2 - h1) / Math.tan((a1 + a2) * (Math.PI / 180));
+    }
+
+    public Double getTargetDistance() {
+        return this.targetDistance;
     }
 
     public boolean isTargetFound() {
@@ -92,6 +103,7 @@ public class Limelight extends SubsystemBase {
         this.previousY = this.y;
         // if(Math.abs(x) < Constants.Limelight.THRESHOLD) this.aligned = true;
         // else this.aligned = false;
+        SmartDashboard.putNumber("[Limelight]-Target-Distance", getTargetDistance());
         SmartDashboard.putNumber("[Limelight]-Distance", getDistance());
     }
 }

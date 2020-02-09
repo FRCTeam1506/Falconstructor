@@ -29,10 +29,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.Intake.IntakeIntake;
 import frc.robot.commands.Limelight.Align;
 import frc.robot.commands.Limelight.AlignFinite;
+import frc.robot.commands.Limelight.CorrectDistance;
 import frc.robot.commands.Limelight.GyroAlign;
 import frc.robot.commands.Limelight.Idle;
 import frc.robot.commands.Limelight.StandardAlignAndSeek;
 import frc.robot.commands.Macros.AimAndShoot;
+import frc.robot.commands.Macros.Arrange;
 import frc.robot.commands.Macros.IntakeAndShoot;
 import frc.robot.commands.Shooter.FullSend;
 import frc.robot.commands.Shooter.Shoot;
@@ -61,6 +63,8 @@ public class RobotContainer {
 
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
+  private final Command l_correctDistance = new CorrectDistance(drivetrain, limelight, 1234.0);
+  private final Command m_arrange = new Arrange(drivetrain, limelight, 1234.0);
   private final Command l_align = new Align(drivetrain, limelight);
   public static final Command l_gyroAlign = new GyroAlign(drivetrain, limelight);
   private final Command l_alignFinite = new AlignFinite(drivetrain, limelight);
@@ -124,7 +128,7 @@ public class RobotContainer {
       .whenReleased(l_idle);
     // [Auto] Ball Pickup
     // Reasoning -- Circle same shape as ball
-    new JoystickButton(driver, Constants.Playstation.CircleButton.getID()).whileHeld(l_gyroAlign);
+    new JoystickButton(driver, Constants.Playstation.CircleButton.getID()).whileHeld(m_arrange);
     // [Shooter] Shoot Ball
     new JoystickButton(driver, Constants.Playstation.RightBumper.getID()).whileHeld(s_fullSend);
     // [Macro] Intake and Shoot

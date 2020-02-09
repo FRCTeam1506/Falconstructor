@@ -12,7 +12,6 @@ public class GyroAlign extends CommandBase {
     public GyroAlign(Drivetrain drivetrain, Limelight limelight) {
         m_drivetrain = drivetrain;
         m_limelight = limelight;
-        addRequirements(m_drivetrain, m_limelight);
     }
 
     @Override
@@ -20,7 +19,6 @@ public class GyroAlign extends CommandBase {
         if(m_limelight.isTargetFound()) {
             double currentHeading = m_drivetrain.getHeading();
             double cameraXError = m_limelight.getX();
-            double distance = m_limelight.getDistance();
             if(m_limelight.isRefreshed) {
                 System.out.println("Refreshed");
                 // double targetHeading = currentHeading + (100.0 / 2.0) * cameraXError; // pixels / degrees

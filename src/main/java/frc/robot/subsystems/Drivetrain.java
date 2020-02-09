@@ -57,14 +57,24 @@ public class Drivetrain extends SubsystemBase {
         this.leftDrive.setInverted(talonFXInvertType);
         this.rightDrive.setInverted(talonFXInvertType);
 
-        this.leftDriveMaster.setNeutralMode(NeutralMode.Brake);
-        this.rightDriveMaster.setNeutralMode(NeutralMode.Brake);
+        this.leftDriveMaster.setNeutralMode(NeutralMode.Coast);
+        this.rightDriveMaster.setNeutralMode(NeutralMode.Coast);
 
         this.leftDriveMaster.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
         this.rightDriveMaster.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
 
         resetEncoders();
         odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
+    }
+
+    public void fwd(double pwr) {
+        this.leftDriveMaster.set(ControlMode.PercentOutput, pwr);
+        this.rightDriveMaster.set(ControlMode.PercentOutput, pwr);
+    }
+
+    public void rot(double pwr) {
+        this.leftDriveMaster.set(ControlMode.PercentOutput, pwr);
+        this.rightDriveMaster.set(ControlMode.PercentOutput, -pwr);
     }
 
     public void drive(double leftPower, double rightPower) {

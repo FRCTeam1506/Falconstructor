@@ -2,9 +2,9 @@
 
 ## Things to work on
 
-- test distance
-- test standard align
-- make pid for gyro align + test gyro align
+- ~~test distance~~
+- ~~test standard align~~
+- make pid for gyro align + ~~test gyro align~~
 - ~~organize limelight pipelines~~
 - make talon fx play music
 
@@ -27,5 +27,5 @@ _____________________
 ## Limelight Distances
 | Measurement | Position | Distance |
 | ----------- | -------- | -------- |
-| 20ft 5in | Close Edge of Trench | 95 |
-| X | In Front of Control Panel | -53 |
+| 245in | Close Edge of Trench | 1,234 |
+| 370in | In Front of Control Panel | 10,000 |
