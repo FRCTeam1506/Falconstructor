@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -20,21 +21,6 @@ public class Limelight extends SubsystemBase {
     }
 
     public Limelight() {}
-
-    @Override
-    public void periodic() {
-        this.x = table.getEntry("tx").getDouble(0.0);
-        this.y = table.getEntry("ty").getDouble(0.0);
-        this.area = table.getEntry("ta").getDouble(0.0);
-        this.targetFound = table.getEntry("tv").getNumber(0).intValue() == 1 ? true : false;
-        this.pipeline = table.getEntry("pipeline").getNumber(0).intValue();
-        this.aligned = Math.abs(x) < Constants.Limelight.THRESHOLD ? true : false;
-        this.isRefreshed = this.x != previousX || this.y != previousY ? true : false;
-        this.previousX = this.x;
-        this.previousY = this.y;
-        // if(Math.abs(x) < Constants.Limelight.THRESHOLD) this.aligned = true;
-        // else this.aligned = false;
-    }
 
     public void setPipeline(int index) {
         this.table.getEntry("pipeline").setNumber(index);
@@ -91,5 +77,21 @@ public class Limelight extends SubsystemBase {
 
     public boolean isAligned() {
         return this.aligned;
+    }
+
+    @Override
+    public void periodic() {
+        this.x = table.getEntry("tx").getDouble(0.0);
+        this.y = table.getEntry("ty").getDouble(0.0);
+        this.area = table.getEntry("ta").getDouble(0.0);
+        this.targetFound = table.getEntry("tv").getNumber(0).intValue() == 1 ? true : false;
+        this.pipeline = table.getEntry("pipeline").getNumber(0).intValue();
+        this.aligned = Math.abs(x) < Constants.Limelight.THRESHOLD ? true : false;
+        this.isRefreshed = this.x != previousX || this.y != previousY ? true : false;
+        this.previousX = this.x;
+        this.previousY = this.y;
+        // if(Math.abs(x) < Constants.Limelight.THRESHOLD) this.aligned = true;
+        // else this.aligned = false;
+        SmartDashboard.putNumber("[Limelight]-Distance", getDistance());
     }
 }

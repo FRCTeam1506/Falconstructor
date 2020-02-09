@@ -36,7 +36,7 @@ public final class Constants {
     }
 
     public static final class Limelight {
-        public static final Double kP = -0.1;
+        public static final Double kP = -0.073; // -0.1
         public static final Double MIN_PWR = 0.05;
         public static final Double THRESHOLD = 0.1;
         public static final Double CONVERSION = 0.03355;

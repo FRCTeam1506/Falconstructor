@@ -1,4 +1,0 @@
-test distance
-test standard align
-make pid for gyro align + test gyro align
-organize limelight pipelines

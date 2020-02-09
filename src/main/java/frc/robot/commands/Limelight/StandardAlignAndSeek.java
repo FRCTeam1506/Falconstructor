@@ -33,13 +33,13 @@ public class StandardAlignAndSeek extends CommandBase {
             Double steeringAdjust = 0.0;
             
             if(variation > Constants.Limelight.THRESHOLD) {
-                steeringAdjust = Constants.Limelight.kP * error - Constants.Limelight.MIN_PWR;
+                steeringAdjust = Constants.Limelight.kP * (error / 1.1) - Constants.Limelight.MIN_PWR;
             } else if(variation < Constants.Limelight.THRESHOLD) {
-                steeringAdjust = Constants.Limelight.kP * error + Constants.Limelight.MIN_PWR;
+                steeringAdjust = Constants.Limelight.kP * (error / 1.1) + Constants.Limelight.MIN_PWR;
             }
-            drivetrain.arcadeDrive(0.0, -steeringAdjust);
+            drivetrain.arcadeDrive(0.0, steeringAdjust);
         } else {
-            drivetrain.arcadeDrive(0.0, -0.2);
+            drivetrain.arcadeDrive(0.0, 0.2);
         }
     }
 }

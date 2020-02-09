@@ -15,7 +15,7 @@ public class IntakeAndShoot extends ParallelCommandGroup {
 
     public IntakeAndShoot(Intake intake, Indexer indexer, Shooter shooter) {
         addCommands(
-            new FullSend(shooter),
+            new FullSend2(shooter),
             new Index(indexer, 0.5),
             new SequentialCommandGroup(
                 new WaitCommand(1.0),

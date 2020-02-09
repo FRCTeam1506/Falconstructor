@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -87,7 +88,7 @@ public class Shooter extends SubsystemBase {
         // this.shooter2.set(ControlMode.PercentOutput, -0.85);
         // this.shooter1.set(ControlMode.Velocity, -38420);
         // this.shooter2.set(ControlMode.Velocity, -38420);
-        this.setVelocity(-22200.0);
+        this.setVelocity(-36000.0);
     }
 
     public void shootBasedOnDistance(Double distance) {
@@ -102,4 +103,12 @@ public class Shooter extends SubsystemBase {
     public void resetTargetVelocity() {
         this.targetVelocity = 0.0;
     }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("[Shooter]-Power", this.shooter1.getMotorOutputPercent());
+        SmartDashboard.putNumber("[Shooter]-Velocity", this.shooter1.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("[Shooter]-Error", this.shooter1.getClosedLoopError());
+    }
+
 }

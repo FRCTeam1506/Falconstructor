@@ -5,10 +5,13 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -64,16 +67,6 @@ public class Drivetrain extends SubsystemBase {
         odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
     }
 
-    @Override
-    public void periodic() {
-        odometry.update(
-            Rotation2d.fromDegrees(getHeading()), 
-            getLeftDistanceMeters(), 
-            getRightDistanceMeters()
-        );
-        this.targetHeading = getHeading();
-    }
-
     public void drive(double leftPower, double rightPower) {
         this.leftDriveMaster.set(ControlMode.PercentOutput, leftPower);
         this.rightDriveMaster.set(ControlMode.PercentOutput, rightPower);
@@ -97,6 +90,11 @@ public class Drivetrain extends SubsystemBase {
     public void arcadeDrive(double fwd, double rot) {
         this.leftDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd + rot + 0.05), 3));
         this.rightDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd - rot), 3));
+    }
+
+    public void regArcadeDrive(double fwd, double rot) {
+        this.leftDriveMaster.set(ControlMode.PercentOutput, (fwd + rot));
+        this.rightDriveMaster.set(ControlMode.PercentOutput, (fwd - rot));
     }
 
     public void stop() {
@@ -153,5 +151,20 @@ public class Drivetrain extends SubsystemBase {
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
         odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
+    }
+
+    @Override
+    public void periodic() {
+        odometry.update(
+            Rotation2d.fromDegrees(getHeading()), 
+            getLeftDistanceMeters(), 
+            getRightDistanceMeters()
+        );
+        if(!(CommandScheduler.getInstance().isScheduled(RobotContainer.getGyroAlign()))) {
+            this.targetHeading = getHeading();
+        }
+        // this.targetHeading = getHeading();
+        SmartDashboard.putNumber("[Drivetrain]-Target-Heading", getTargetHeading());
+        SmartDashboard.putNumber("[Drivetrain]-Heading", getHeading());
     }
 }
