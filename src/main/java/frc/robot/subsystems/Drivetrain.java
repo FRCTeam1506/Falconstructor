@@ -57,8 +57,8 @@ public class Drivetrain extends SubsystemBase {
         this.leftDrive.setInverted(talonFXInvertType);
         this.rightDrive.setInverted(talonFXInvertType);
 
-        this.leftDriveMaster.setNeutralMode(NeutralMode.Coast);
-        this.rightDriveMaster.setNeutralMode(NeutralMode.Coast);
+        this.leftDriveMaster.setNeutralMode(NeutralMode.Brake);
+        this.rightDriveMaster.setNeutralMode(NeutralMode.Brake);
 
         this.leftDriveMaster.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
         this.rightDriveMaster.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
@@ -143,14 +143,14 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getLeftDistanceMeters() {
-        return (leftDriveMaster.getSelectedSensorPosition() / Constants.General.LEFT_TICKS_PER_REV * Constants.Drivetrain.GEAR_RATIO) * Constants.Drivetrain.WHEEL_CIRCUMFERENCE_METERS;
+        return (leftDriveMaster.getSelectedSensorPosition() / Constants.General.LEFT_TICKS_PER_REV ) * Constants.Drivetrain.WHEEL_CIRCUMFERENCE_METERS;
     }
 
     public double getRightDistanceMeters() {
-        return (rightDriveMaster.getSelectedSensorPosition() / Constants.General.RIGHT_TICKS_PER_REV * Constants.Drivetrain.GEAR_RATIO) * Constants.Drivetrain.WHEEL_CIRCUMFERENCE_METERS;
+        return (rightDriveMaster.getSelectedSensorPosition() / Constants.General.RIGHT_TICKS_PER_REV ) * Constants.Drivetrain.WHEEL_CIRCUMFERENCE_METERS;
     }
 
-    public double getAverageEncoderDistance() {
+    public double getAverageEncoderDistanceMeters() {
         return ( ( getLeftDistanceMeters() + getRightDistanceMeters() ) / 2.0);
     }
 
@@ -176,5 +176,7 @@ public class Drivetrain extends SubsystemBase {
         // this.targetHeading = getHeading();
         SmartDashboard.putNumber("[Drivetrain]-Target-Heading", getTargetHeading());
         SmartDashboard.putNumber("[Drivetrain]-Heading", getHeading());
+        SmartDashboard.putNumber("[Drivetrain]-Left-Dist-Meters", getLeftDistanceMeters());
+        SmartDashboard.putNumber("[Drivetrain]-Right-Dist-Meters", getRightDistanceMeters());
     }
 }

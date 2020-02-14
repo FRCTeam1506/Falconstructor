@@ -22,6 +22,7 @@ public class Limelight extends SubsystemBase {
 
     public Limelight() {
         this.targetDistance = 1234.0;
+        this.x = 0.0;
     }
 
     public void setPipeline(int index) {

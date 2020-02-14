@@ -18,6 +18,12 @@ public class CorrectDistance extends CommandBase {
         m_targetDistance = targetDistance;
     }
 
+    public CorrectDistance(Drivetrain drivetrain, Limelight limelight) {
+        m_drivetrain = drivetrain;
+        m_limelight = limelight;
+        m_targetDistance = 1234.0;
+    }
+
     @Override
     public void initialize() {
         m_limelight.setTargetDistance(m_targetDistance);

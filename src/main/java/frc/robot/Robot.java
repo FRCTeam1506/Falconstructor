@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Limelight.Piplelines;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -32,12 +33,13 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     System.out.println("Robot initializing ...");
-    RobotContainer.limelight.setPipeline(5);
-    RobotContainer.drivetrain.resetEncoders();
+    // RobotContainer.limelight.setPipeline(5);
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    RobotContainer.limelight.setPipeline(Piplelines.NearTargeting);
+    RobotContainer.drivetrain.resetEncoders();
   }
 
   /**

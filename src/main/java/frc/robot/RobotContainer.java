@@ -20,11 +20,13 @@ import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 import frc.robot.commands.Intake.IntakeIntake;
 import frc.robot.commands.Limelight.Align;
@@ -35,13 +37,19 @@ import frc.robot.commands.Limelight.Idle;
 import frc.robot.commands.Limelight.StandardAlignAndSeek;
 import frc.robot.commands.Macros.AimAndShoot;
 import frc.robot.commands.Macros.Arrange;
+import frc.robot.commands.Macros.GyroAlignAndCorrectDist;
 import frc.robot.commands.Macros.IntakeAndShoot;
 import frc.robot.commands.Shooter.FullSend;
 import frc.robot.commands.Shooter.Shoot;
 import frc.robot.commands.Auto.Nothing;
+import frc.robot.commands.Drivetrain.DriveToDist;
+import frc.robot.commands.Drivetrain.DriveToDistProfiled;
 import frc.robot.commands.Drivetrain.FastArcadeDrive;
 import frc.robot.commands.Drivetrain.LimitedArcadeDrive;
+import frc.robot.commands.Drivetrain.TurnToAngle;
+import frc.robot.commands.Drivetrain.TurnToAngleProfiled;
 import frc.robot.commands.Indexer.Index;
+
 import frc.robot.subsystems.*;
 
 /**
@@ -63,17 +71,21 @@ public class RobotContainer {
 
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
-  private final Command l_correctDistance = new CorrectDistance(drivetrain, limelight, 1234.0);
-  private final Command m_arrange = new Arrange(drivetrain, limelight, 1234.0);
+  private final Command l_correctDistance = new CorrectDistance(drivetrain, limelight);
   private final Command l_align = new Align(drivetrain, limelight);
-  public static final Command l_gyroAlign = new GyroAlign(drivetrain, limelight);
   private final Command l_alignFinite = new AlignFinite(drivetrain, limelight);
   private final Command l_standardAlignAndSeek = new StandardAlignAndSeek(drivetrain, limelight);
   private final Command l_idle = new Idle(drivetrain, limelight);
-  private final Command a_nothing = new Nothing();
+  public static final Command l_gyroAlign = new GyroAlign(drivetrain, limelight);
+
   private final Command s_fullSend = new FullSend(shooter);
+
+  private final Command a_nothing = new Nothing();
+
   private final Command m_intakeAndShoot = new IntakeAndShoot(intake, indexer, shooter);
   private final Command m_aimAndShoot = new AimAndShoot(drivetrain, limelight, indexer, intake, shooter);
+  private final Command m_arrange = new Arrange(drivetrain, limelight, 1234.0);
+  private final Command m_gyroAlignAndCorrectDist = new GyroAlignAndCorrectDist(drivetrain, limelight);
 
   public static Joystick driver = new Joystick(0);
 
@@ -91,6 +103,8 @@ public class RobotContainer {
     setDefaultCommands();
     // Set Auton Configuration
     setAutoConfig();
+
+    smartdashboard();
   }
 
   public static void setAlign(boolean value) {
@@ -135,6 +149,36 @@ public class RobotContainer {
     new JoystickButton(driver, Constants.Playstation.TriangleButton.getID()).whenHeld(m_intakeAndShoot);
     // [Macro] Aim and Shoot
     new JoystickButton(driver, Constants.Playstation.SquareButton.getID()).whenHeld(m_aimAndShoot);
+
+    new JoystickButton(driver, Constants.Playstation.BigButton.getID()).whileHeld(m_gyroAlignAndCorrectDist);
+    new JoystickButton(driver, Constants.Playstation.LeftButton.getID()).whenPressed(
+      new TurnToAngle(
+        drivetrain,
+        limelight
+      ).withTimeout(5)
+    );
+
+    new JoystickButton(driver, Constants.Playstation.RightButton.getID()).whenPressed(
+      new TurnToAngleProfiled(
+        drivetrain,
+        drivetrain.getHeading() + -limelight.getX()
+        ).withTimeout(5)
+    );
+
+    // new POVButton(driver, Constants.Playstation.NorthPOVButton.getID()).whenPressed(
+    //   new DriveToDist(
+    //     drivetrain,
+    //     targetDistMeters
+    //   ).withTimeout(5)
+    // );
+
+    // new POVButton(driver, Constants.Playstation.SouthPOVButton.getID()).whenPressed(
+    //   new DriveToDistProfiled(
+    //     drivetrain,
+    //     targetDistMeters
+    //   ).withTimeout(5)
+    // );
+
   }
 
   private void setDefaultCommands() {
@@ -224,6 +268,12 @@ public class RobotContainer {
         drivetrain
     );
     return ramseteCommand.andThen(() -> drivetrain.tankDrive(0,0));
+  }
+
+  public void smartdashboard() {
+    System.out.println("Heading " + drivetrain.getHeading());
+    System.out.println("Limelight-X " + -limelight.getX());
+    SmartDashboard.putNumber("[+]-Target-Angle-Degrees", drivetrain.getHeading() + -limelight.getX());
   }
 
   public static Command getGyroAlign() {

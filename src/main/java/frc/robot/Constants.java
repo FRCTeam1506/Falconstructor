@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-import com.fasterxml.jackson.databind.util.Named;
-
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
@@ -76,6 +74,22 @@ public final class Constants {
         );
 
         public static final TrajectoryConfig config = new TrajectoryConfig(MAX_VELOCITY, MAX_ACCELERATION).setKinematics(kDriveKinematics).addConstraint(autoVoltageConstraint);
+    
+        public static final double[] HEADING_PID = {0.015, 0.03, 0.0021}; // 0.02 0.001
+
+        public static final double TURN_TOLERANCE = 0.01;
+        public static final double TURN_RATE_TOLERANCE = 10.0;
+
+        public static final double MAX_TURN_RATE = 100.0;
+        public static final double MAX_TURN_ACCEL = 300.0;
+
+        public static final double[] DIST_PID = {1.0, 0.0, 0.0};
+
+        public static final double DIST_TOLERANCE = 50.0;
+        public static final double DIST_RATE_TOLERANCE = 300.0;
+
+        public static final double MAX_DIST_VEL = 100.0;
+        public static final double MAX_DIST_ACCEL = 300.0;
     }
     public static final class Turret {
         public static final NamedID TURRET_ID = new NamedID("Turret-ID", 17);
@@ -131,5 +145,15 @@ public final class Constants {
         public static final NamedID RightJoystickButton = new NamedID("Driver-Right-Joystick-Button", 12);
         public static final NamedID MiddleButton = new NamedID("Driver-Middle-Joystick-Button", 13);
         public static final NamedID BigButton = new NamedID("Driver-Big-Button", 14);
+
+        // POV Button
+        public static final NamedID NorthPOVButton = new NamedID("Driver-North-POV-Button", 0);
+        public static final NamedID NorthEastPOVButton = new NamedID("Driver-North-East-POV-Button", 45);
+        public static final NamedID EastPOVButton = new NamedID("Driver-East-POV-Button", 90);
+        public static final NamedID SouthEastPOVButton = new NamedID("Driver-North-POV-Button", 135);
+        public static final NamedID SouthPOVButton = new NamedID("Driver-North-POV-Button", 180);
+        public static final NamedID SouthWestPOVButton = new NamedID("Driver-North-POV-Button", 225);
+        public static final NamedID WestPOVButton = new NamedID("Driver-North-POV-Button", 270);
+        public static final NamedID NorthWestPOVButton = new NamedID("Driver-North-POV-Button", 315);
     }
 }
