@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    RobotContainer.limelight.setPipeline(Piplelines.NearTargeting);
+    RobotContainer.limelight.setPipeline(Piplelines.FarTargeting);
     RobotContainer.drivetrain.resetEncoders();
   }
 

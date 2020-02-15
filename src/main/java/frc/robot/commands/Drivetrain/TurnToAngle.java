@@ -28,7 +28,6 @@ public class TurnToAngle extends PIDCommand {
         getController().setTolerance(
             Constants.Drivetrain.TURN_TOLERANCE
         );
-
     }
 
     @Override

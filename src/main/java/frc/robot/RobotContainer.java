@@ -161,23 +161,23 @@ public class RobotContainer {
     new JoystickButton(driver, Constants.Playstation.RightButton.getID()).whenPressed(
       new TurnToAngleProfiled(
         drivetrain,
-        drivetrain.getHeading() + -limelight.getX()
+        limelight
         ).withTimeout(5)
     );
 
-    // new POVButton(driver, Constants.Playstation.NorthPOVButton.getID()).whenPressed(
-    //   new DriveToDist(
-    //     drivetrain,
-    //     targetDistMeters
-    //   ).withTimeout(5)
-    // );
+    new POVButton(driver, Constants.Playstation.NorthPOVButton.getID()).whenPressed(
+      new DriveToDist(
+        drivetrain,
+        limelight
+      ).withTimeout(5)
+    );
 
-    // new POVButton(driver, Constants.Playstation.SouthPOVButton.getID()).whenPressed(
-    //   new DriveToDistProfiled(
-    //     drivetrain,
-    //     targetDistMeters
-    //   ).withTimeout(5)
-    // );
+    new POVButton(driver, Constants.Playstation.SouthPOVButton.getID()).whenPressed(
+      new DriveToDistProfiled(
+        drivetrain,
+        limelight
+      ).withTimeout(5)
+    );
 
   }
 

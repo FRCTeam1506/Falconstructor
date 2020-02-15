@@ -9,7 +9,7 @@ import frc.robot.Constants;
 public class Limelight extends SubsystemBase {
 
     public boolean aligned, isRefreshed;
-    private Double x, y, area, targetDistance ,previousX, previousY;
+    private Double x, y, area, targetDistance, previousX, previousY, previousDist;
     private boolean targetFound;
     private Integer pipeline;
 
@@ -23,6 +23,7 @@ public class Limelight extends SubsystemBase {
     public Limelight() {
         this.targetDistance = 1234.0;
         this.x = 0.0;
+        this.previousDist = 5000.0;
     }
 
     public void setPipeline(int index) {
@@ -70,13 +71,21 @@ public class Limelight extends SubsystemBase {
     }
 
     public Double getDistance() {
+        double val;
         // inches
         Double h2 = 96.0;
         Double h1 = 30.0;
-        Double a1 = 0.258;
+        Double a1 = 1.0; // 0.258
         Double a2 = this.y;
         // return (h2 - h1) / Math.tan(a1 + a2);
-        return (h2 - h1) / Math.tan((a1 + a2) * (Math.PI / 180));
+        double dist = (h2 - h1) / (Math.tan((a1 + a2) * (Math.PI / 180)));
+        if(dist > 0) {
+            val = (double) Math.ceil((dist / 1000.0)) * 1000.0;
+            if(Math.abs(val) < 1) this.previousDist = val;
+        } else {
+            val = this.previousDist;
+        }
+        return val;
     }
 
     public Double getTargetDistance() {

@@ -75,7 +75,7 @@ public final class Constants {
 
         public static final TrajectoryConfig config = new TrajectoryConfig(MAX_VELOCITY, MAX_ACCELERATION).setKinematics(kDriveKinematics).addConstraint(autoVoltageConstraint);
     
-        public static final double[] HEADING_PID = {0.015, 0.03, 0.0021}; // 0.02 0.001
+        public static final double[] HEADING_PID = {0.015, 0.03, 0.0031}; // 0.02 0.001
 
         public static final double TURN_TOLERANCE = 0.01;
         public static final double TURN_RATE_TOLERANCE = 10.0;
@@ -83,13 +83,14 @@ public final class Constants {
         public static final double MAX_TURN_RATE = 100.0;
         public static final double MAX_TURN_ACCEL = 300.0;
 
-        public static final double[] DIST_PID = {1.0, 0.0, 0.0};
+        public static final double[] DIST_PID = {0.00009, 0.00003, 0.000001}; 
+        // public static final double[] DIST_PID = {0.00013, 0.00003, 0.000001};
 
         public static final double DIST_TOLERANCE = 50.0;
         public static final double DIST_RATE_TOLERANCE = 300.0;
 
-        public static final double MAX_DIST_VEL = 100.0;
-        public static final double MAX_DIST_ACCEL = 300.0;
+        public static final double MAX_DIST_VEL = 10.0;
+        public static final double MAX_DIST_ACCEL = 30.0;
     }
     public static final class Turret {
         public static final NamedID TURRET_ID = new NamedID("Turret-ID", 17);

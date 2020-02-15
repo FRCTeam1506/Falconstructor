@@ -5,10 +5,11 @@ import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Limelight;
 
 public class DriveToDistProfiled extends ProfiledPIDCommand {
 
-    public DriveToDistProfiled(Drivetrain drivetrain, double targetDistMeters) {
+    public DriveToDistProfiled(Drivetrain drivetrain, Limelight limelight) {
         super(
             new ProfiledPIDController(
                 Constants.Drivetrain.DIST_PID[0],
@@ -16,15 +17,17 @@ public class DriveToDistProfiled extends ProfiledPIDCommand {
                 Constants.Drivetrain.DIST_PID[2],
                 new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_DIST_VEL, Constants.Drivetrain.MAX_DIST_ACCEL)
             ),
-            drivetrain::getAverageEncoderDistanceMeters,
-            targetDistMeters,
-            (output, setpoint) -> drivetrain.regArcadeDrive(output, 0.0),
+            limelight::getDistance,
+            5000.0,
+            (output, setpoint) -> {
+                System.out.println(-output);
+                // drivetrain.regArcadeDrive(-output, 0.0);
+            },
             drivetrain
         );
 
         getController().setTolerance(
-            Constants.Drivetrain.DIST_TOLERANCE,
-            Constants.Drivetrain.DIST_RATE_TOLERANCE
+            Constants.Drivetrain.DIST_TOLERANCE
         );
     }
 
