@@ -8,7 +8,7 @@ import frc.robot.subsystems.Limelight;
 
 public class DriveToDist extends PIDCommand {
 
-    public DriveToDist(Drivetrain drivetrain, Limelight limelight) {
+    public DriveToDist(Drivetrain drivetrain, Limelight limelight, double targetDist) {
         super(
             new PIDController(
                 Constants.Drivetrain.DIST_PID[0],
@@ -16,7 +16,7 @@ public class DriveToDist extends PIDCommand {
                 Constants.Drivetrain.DIST_PID[2]
             ),
             limelight::getDistance,
-            5000.0,
+            targetDist,
             output -> {
                 System.out.println(-output);
                 drivetrain.regArcadeDrive(-output, 0.0);

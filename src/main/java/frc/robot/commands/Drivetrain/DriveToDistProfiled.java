@@ -9,7 +9,7 @@ import frc.robot.subsystems.Limelight;
 
 public class DriveToDistProfiled extends ProfiledPIDCommand {
 
-    public DriveToDistProfiled(Drivetrain drivetrain, Limelight limelight) {
+    public DriveToDistProfiled(Drivetrain drivetrain, Limelight limelight, double targetDist) {
         super(
             new ProfiledPIDController(
                 Constants.Drivetrain.DIST_PID[0],
@@ -18,7 +18,7 @@ public class DriveToDistProfiled extends ProfiledPIDCommand {
                 new TrapezoidProfile.Constraints(Constants.Drivetrain.MAX_DIST_VEL, Constants.Drivetrain.MAX_DIST_ACCEL)
             ),
             limelight::getDistance,
-            5000.0,
+            targetDist,
             (output, setpoint) -> {
                 System.out.println(-output);
                 // drivetrain.regArcadeDrive(-output, 0.0);

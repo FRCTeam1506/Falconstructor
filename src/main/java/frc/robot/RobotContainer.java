@@ -168,14 +168,16 @@ public class RobotContainer {
     new POVButton(driver, Constants.Playstation.NorthPOVButton.getID()).whenPressed(
       new DriveToDist(
         drivetrain,
-        limelight
+        limelight,
+        5000.0
       ).withTimeout(5)
     );
 
     new POVButton(driver, Constants.Playstation.SouthPOVButton.getID()).whenPressed(
       new DriveToDistProfiled(
         drivetrain,
-        limelight
+        limelight,
+        5000.0
       ).withTimeout(5)
     );
 
