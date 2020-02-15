@@ -17,7 +17,11 @@ public class Limelight extends SubsystemBase {
 
     public enum Piplelines {
         NearTargeting,
-        FarTargeting
+        FarTargeting,
+        Red,
+        Green,
+        Blue,
+        Yellow
     }
 
     public Limelight() {
@@ -38,6 +42,22 @@ public class Limelight extends SubsystemBase {
 
             case FarTargeting:
                 this.setPipeline(6);
+                break;
+
+            case Red:
+                this.setPipeline(0);
+                break;
+
+            case Green:
+                this.setPipeline(1);
+                break;
+
+            case Blue:
+                this.setPipeline(2);
+                break;
+
+            case Yellow:
+                this.setPipeline(3);
                 break;
         
             default:
