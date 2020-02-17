@@ -1,17 +1,25 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Transform2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.commands.Drivetrain.DriveTrajectory;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -33,7 +41,11 @@ public class Drivetrain extends SubsystemBase {
 
     public AHRS navx = new AHRS(SPI.Port.kMXP);
 
-    public DifferentialDriveOdometry odometry;
+    private DifferentialDriveOdometry odometry;
+    private RamseteController ramseteController;
+    private SimpleMotorFeedforward feedforward;
+
+    private Timer pathTimer;
 
     public boolean isProfileFinished;
 
@@ -49,8 +61,8 @@ public class Drivetrain extends SubsystemBase {
         this.leftDrive.follow(this.leftDriveMaster);
         this.rightDrive.follow(this.rightDriveMaster);
 
-        this.leftDriveMaster.setSensorPhase(false);
-        this.rightDriveMaster.setSensorPhase(false);
+        this.leftDriveMaster.setSensorPhase(true);
+        this.rightDriveMaster.setSensorPhase(true);
 
         this.leftDriveMaster.setInverted(false);
         this.rightDriveMaster.setInverted(true);
@@ -63,8 +75,13 @@ public class Drivetrain extends SubsystemBase {
         this.leftDriveMaster.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
         this.rightDriveMaster.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
 
+        feedforward = new SimpleMotorFeedforward(Constants.Drivetrain.kS, Constants.Drivetrain.kV, Constants.Drivetrain.kA);
+
         resetEncoders();
         odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
+        ramseteController = new RamseteController(2.0, 0.7);
+
+        pathTimer = new Timer();
     }
 
     public void fwd(double pwr) {
@@ -88,8 +105,8 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void tankDriveVolts(double leftVolts, double rightVolts) {
-        this.leftDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(leftVolts/12, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
-        this.rightDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(rightVolts/12, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
+        this.leftDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(-leftVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
+        this.rightDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(-rightVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
     }
 
     public void limitedArcadeDrive(double fwd, double rot) {
@@ -98,7 +115,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void arcadeDrive(double fwd, double rot) {
-        this.leftDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd + rot + 0.05), 3));
+        this.leftDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd + rot), 3));
         this.rightDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd - rot), 3));
     }
 
@@ -151,7 +168,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getAverageEncoderDistanceMeters() {
-        return ( ( getLeftDistanceMeters() + getRightDistanceMeters() ) / 2.0);
+        return ( ( getLeftDistanceMeters() + getRightDistanceMeters() ) / 2.0 );
     }
 
     public void resetGyro() {
@@ -163,6 +180,57 @@ public class Drivetrain extends SubsystemBase {
         odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
     }
 
+    public void driveTrajectory(Trajectory trajectory, boolean reversedTrajectory) {
+        pathTimer.reset();
+        pathTimer.start();
+        Trajectory.State currentStateTraj = trajectory.sample(pathTimer.get());
+        ChassisSpeeds ramseteChassisSpeeds;
+
+        if (!reversedTrajectory) {
+            ramseteChassisSpeeds = ramseteController.calculate(
+                odometry.getPoseMeters(), 
+                currentStateTraj);
+        }
+        else {
+            ramseteChassisSpeeds = ramseteController.calculate(
+                odometry.getPoseMeters().transformBy(new Transform2d(new Translation2d(0, 0), new Rotation2d(Math.PI))), 
+                currentStateTraj);
+        }
+        DifferentialDriveWheelSpeeds ramseteDSpeeds = Constants.Drivetrain.kDriveKinematics.toWheelSpeeds(ramseteChassisSpeeds);
+
+        double leftSetpoint;
+        double rightSetpoint;
+
+        if (!reversedTrajectory) {
+            leftSetpoint = ramseteDSpeeds.leftMetersPerSecond;
+            rightSetpoint = ramseteDSpeeds.rightMetersPerSecond;
+        }
+        else {
+            leftSetpoint = -ramseteDSpeeds.rightMetersPerSecond;
+            rightSetpoint = -ramseteDSpeeds.leftMetersPerSecond;
+        }
+
+        // use P to acquire desired velocity and feedforward to acquire desired velocity
+        double ramseteLeftError = leftSetpoint - leftDriveMaster.getSelectedSensorVelocity();
+        double ramseteRightError = rightSetpoint - rightDriveMaster.getSelectedSensorVelocity();
+
+        double leftVolts = ramseteLeftError * 0.001 + feedforward.calculate(leftSetpoint);
+        double rightVolts = ramseteRightError * 0.001 + feedforward.calculate(rightSetpoint);
+
+        System.out.println("Left " + leftVolts);
+        System.out.println("Right " + rightVolts);
+
+        this.tankDriveVolts(
+            rightVolts,
+            leftVolts
+        );
+
+        if (trajectory.getTotalTimeSeconds() <= pathTimer.get()) {
+            pathTimer.stop();
+            trajectory = null;
+        }
+    }
+
     @Override
     public void periodic() {
         odometry.update(
@@ -170,13 +238,15 @@ public class Drivetrain extends SubsystemBase {
             getLeftDistanceMeters(), 
             getRightDistanceMeters()
         );
-        if(!(CommandScheduler.getInstance().isScheduled(RobotContainer.getGyroAlign()))) {
-            this.targetHeading = getHeading();
-        }
+        // if(!(CommandScheduler.getInstance().isScheduled(RobotContainer.getGyroAlign()))) {
+        //     this.targetHeading = getHeading();
+        // }
         // this.targetHeading = getHeading();
         SmartDashboard.putNumber("[Drivetrain]-Target-Heading", getTargetHeading());
         SmartDashboard.putNumber("[Drivetrain]-Heading", getHeading());
         SmartDashboard.putNumber("[Drivetrain]-Left-Dist-Meters", getLeftDistanceMeters());
         SmartDashboard.putNumber("[Drivetrain]-Right-Dist-Meters", getRightDistanceMeters());
+        SmartDashboard.putNumber("[Drivetrain]-Left-Ticks", this.leftDriveMaster.getSelectedSensorPosition());
+        SmartDashboard.putNumber("[Drivetrain]-Right-Ticks", this.rightDriveMaster.getSelectedSensorPosition());
     }
 }

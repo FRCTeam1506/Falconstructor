@@ -16,7 +16,7 @@ public class Intake extends SubsystemBase {
 
     public WPI_VictorSPX intake = new WPI_VictorSPX(Constants.Intake.INTAKE_ID.getID());
 
-    public Solenoid xfactor = new Solenoid(0);
+    // public Solenoid xfactor = new Solenoid(0);
 
     private boolean state = false;
 
@@ -29,12 +29,12 @@ public class Intake extends SubsystemBase {
     }
 
     public void retract() {
-        this.xfactor.set(false);
+        // this.xfactor.set(false);
         state = false;
     }
 
     public void extend() {
-        this.xfactor.set(true);
+        // this.xfactor.set(true);
         state = true;
     }
 

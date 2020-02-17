@@ -41,7 +41,9 @@ import frc.robot.commands.Macros.GyroAlignAndCorrectDist;
 import frc.robot.commands.Macros.IntakeAndShoot;
 import frc.robot.commands.Shooter.FullSend;
 import frc.robot.commands.Shooter.Shoot;
+import frc.robot.Constants.AutonTrajectories;
 import frc.robot.commands.Auto.Nothing;
+import frc.robot.commands.Auto.TestAuto;
 import frc.robot.commands.Drivetrain.DriveToDist;
 import frc.robot.commands.Drivetrain.DriveToDistProfiled;
 import frc.robot.commands.Drivetrain.FastArcadeDrive;
@@ -51,6 +53,7 @@ import frc.robot.commands.Drivetrain.TurnToAngleProfiled;
 import frc.robot.commands.Indexer.Index;
 
 import frc.robot.subsystems.*;
+import frc.robot.utils.TrajectoryLoader;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -69,7 +72,7 @@ public class RobotContainer {
   public static final Intake intake = new Intake();
   public static final Indexer indexer = new Indexer();
 
-  private SendableChooser<Command> autoChooser = new SendableChooser<>();
+  private SendableChooser<Constants.AutonTrajectories> autoChooser = new SendableChooser<>();
 
   private final Command l_correctDistance = new CorrectDistance(drivetrain, limelight);
   private final Command l_align = new Align(drivetrain, limelight);
@@ -211,10 +214,11 @@ public class RobotContainer {
   private void setAutoConfig() {
     // RamseteCommand ramseteCommand = new RamseteCommand(trajectory, pose, controller, feedforward, kinematics, wheelSpeeds, leftController, rightController, outputVolts, requirements);
 	// autoChooser.setDefaultOption("DRIVE fwd - TURN left", new FwdThenLeft(drivetrain));
-	  autoChooser.setDefaultOption("1auto", null);
-    autoChooser.addOption("Safe", null);
-    autoChooser.addOption("Aim and Shoot", null);
+	  autoChooser.setDefaultOption("test", AutonTrajectories.Test);
+    autoChooser.addOption("5 Ball", AutonTrajectories.Ball5);
+    autoChooser.addOption("10 Ball", AutonTrajectories.Ball10);
     Shuffleboard.getTab("Autonomous").add(autoChooser);
+    SmartDashboard.putData(autoChooser);
   }
 
   /**
@@ -264,11 +268,38 @@ public class RobotContainer {
         ), 
         Constants.Drivetrain.kDriveKinematics, 
         drivetrain::getWheelSpeeds, 
-        new PIDController(3.0, 0.0, 0.0), 
-        new PIDController(3.0, 0.0, 0.0), 
-        drivetrain::tankDrive, 
+        new PIDController(0.1, 0.0, 0.0), 
+        new PIDController(0.1, 0.0, 0.0), 
+        drivetrain::tankDriveVolts,
         drivetrain
     );
+    return ramseteCommand.andThen(() -> drivetrain.tankDrive(0,0));
+  }
+
+  public Command getAutoCommand() {
+    Constants.AutonTrajectories auton = autoChooser.getSelected();
+
+    Trajectory trajectory = TrajectoryLoader.loadTrajectoryFromFile("v2");
+
+    RamseteCommand ramseteCommand = new RamseteCommand(
+        trajectory,
+        drivetrain::getPose, 
+        new RamseteController(2.0, 0.7), 
+        new SimpleMotorFeedforward(
+            Constants.Drivetrain.kS,
+            Constants.Drivetrain.kV,
+            Constants.Drivetrain.kA
+        ), 
+        Constants.Drivetrain.kDriveKinematics, 
+        drivetrain::getWheelSpeeds, 
+        new PIDController(0.1, 0.0, 0.0), 
+        new PIDController(0.1, 0.0, 0.0), 
+        drivetrain::tankDriveVolts,
+        drivetrain
+    );
+
+    // if(auton == AutonTrajectories.Test) return new TestAuto(drivetrain);
+
     return ramseteCommand.andThen(() -> drivetrain.tankDrive(0,0));
   }
 

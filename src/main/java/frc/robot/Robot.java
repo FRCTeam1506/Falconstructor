@@ -74,7 +74,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     RobotContainer.drivetrain.resetEncoders();
     RobotContainer.drivetrain.resetGyro();
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand(); 
+    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutoCommand();
     // m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)

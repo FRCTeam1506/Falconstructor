@@ -23,5 +23,4 @@ public class TrenchFar extends SequentialCommandGroup {
             new IndexerAndIntake(intake, indexer)
         );
     }
-
 }
