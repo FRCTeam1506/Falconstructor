@@ -7,6 +7,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.utils.NamedID;
 
 /**
@@ -23,17 +28,81 @@ public final class Constants {
 
     public static final class General {}
 
-    public static final class Drivetrain {}
+    public static final class Drivetrain {
+        public static final NamedID LEFT_DRIVE_MASTER_ID = new NamedID("Left-Drive-Master-ID", 0);
+        public static final NamedID LEFT_DRIVE_ID = new NamedID("Left-Drive-ID", 1);
+        public static final NamedID RIGHT_DRIVE_MASTER_ID = new NamedID("Right-Drive-Master-ID", 14);
+        public static final NamedID RIGHT_DRIVE_ID = new NamedID("Right-Drive-ID", 15);
+
+        public static final Double LEFT_TICKS_PER_REV = 150175.0 / Units.inchesToMeters(127); // 18600.0
+        public static final Double RIGHT_TICKS_PER_REV = 162088.0 / Units.inchesToMeters(141); // 9326 19500.0
+
+        public static final Double MAX_VELOCITY = 2.0;
+        public static final Double MAX_ACCELERATION = 0.5;
+        public static final Double MAX_VOLTS = 100.0;
+
+        public static final Double kTrackwidthMeters = 5.760433057155806;
+        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
+
+        public static final Double kS = 0.37; // 0.37
+        public static final Double kV = 0.224; // 0.224
+        public static final Double kA = 0.0109; // 0.0109
+        public static final Double kP = 0.000439; // 0.000439
+        public static final Double kD = 0.000183; // 0.000183
+
+        public static final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(
+                kS,
+                kV,
+                kA
+            ),
+            kDriveKinematics, 10
+        );
+
+        public static final TrajectoryConfig config = new TrajectoryConfig(MAX_VELOCITY, MAX_ACCELERATION).setKinematics(kDriveKinematics).addConstraint(autoVoltageConstraint);
+    
+        public static final double[] HEADING_PID = {0.015, 0.03, 0.0031};
+
+        public static final double TURN_TOLERANCE = 0.01;
+        public static final double TURN_RATE_TOLERANCE = 10.0;
+
+        public static final double MAX_TURN_RATE = 100.0;
+        public static final double MAX_TURN_ACCEL = 300.0;
+
+        public static final double[] DIST_PID = {0.00009, 0.00003, 0.000001}; 
+
+        public static final double DIST_TOLERANCE = 50.0;
+        public static final double DIST_RATE_TOLERANCE = 300.0;
+
+        public static final double MAX_DIST_VEL = 10.0;
+        public static final double MAX_DIST_ACCEL = 30.0;
+    }
 
     public static final class Turret {}
 
-    public static final class Shooter {}
+    public static final class Shooter {
+        public static final NamedID SHOOTER_1_ID = new NamedID("Shooter-1-ID", 0xa);
+        public static final NamedID SHOOTER_2_ID = new NamedID("Shooter-2-ID", 0xb);
 
-    public static final class Intake {}
+        public static final Double kP = 0.037;
+        public static final Double kI = 0.0;
+        public static final Double kD = 0.0;
+        public static final Double kF = 0.049;
+    }
 
-    public static final class HorizIndexer {}
+    public static final class Intake {
+        public static final NamedID INTAKE_ID = new NamedID("Intake-ID", 0xc);
+        public static final NamedID XFACTOR_ID = new NamedID("Xfactor-ID", 0xd);
+    }
 
-    public static final class VertIndexer {}
+    public static final class HorizIndexer {
+        public static final NamedID LEFT_INDEXER_ID = new NamedID("Left-Indexer-ID", 0xe);
+        public static final NamedID RIGHT_INDEXER_ID = new NamedID("Right-Indexer-ID", 0xf);
+    }
+
+    public static final class VertIndexer {
+        public static final NamedID INDEXER_ID = new NamedID("Indexer-ID", 0xf1);
+    }
 
     public static final class Playstation {
         
