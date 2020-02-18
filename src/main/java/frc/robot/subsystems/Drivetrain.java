@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import frc.robot.Constants;
+import frc.robot.RobotContainer;
+
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
@@ -16,10 +19,6 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
-
-import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.commands.Drivetrain.DriveTrajectory;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -94,11 +93,6 @@ public class Drivetrain extends SubsystemBase {
         this.rightDriveMaster.set(ControlMode.PercentOutput, -pwr);
     }
 
-    public void drive(double leftPower, double rightPower) {
-        this.leftDriveMaster.set(ControlMode.PercentOutput, leftPower);
-        this.rightDriveMaster.set(ControlMode.PercentOutput, rightPower);
-    }
-
     public void tankDrive(double leftSpeed, double rightSpeed) {
         this.leftDriveMaster.set(ControlMode.PercentOutput, leftSpeed);
         this.rightDriveMaster.set(ControlMode.PercentOutput, rightSpeed);
@@ -134,14 +128,6 @@ public class Drivetrain extends SubsystemBase {
         this.rightDriveMaster.setSelectedSensorPosition(0, 0, 0);
     }
 
-    public double getTargetHeading() {
-        return this.targetHeading;
-    }
-
-    public void setTargetHeading(double heading) {
-        this.targetHeading = heading;
-    }
-
     public Double getHeading() {
         return Math.IEEEremainder(navx.getAngle(), 360);
     }
@@ -155,19 +141,19 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getLeftDistanceMeters() {
-        return -leftDriveMaster.getSelectedSensorPosition() / Constants.Drivetrain.LEFT_TICKS_PER_REV;
+        return leftDriveMaster.getSelectedSensorPosition() / Constants.Drivetrain.LEFT_TICKS_PER_REV;
     }
 
     public double getRightDistanceMeters() {
-        return -rightDriveMaster.getSelectedSensorPosition() / Constants.Drivetrain.RIGHT_TICKS_PER_REV;
+        return rightDriveMaster.getSelectedSensorPosition() / Constants.Drivetrain.RIGHT_TICKS_PER_REV;
     }
 
     public double getLeftVelocityMetersPerSecond() {
-        return -leftDriveMaster.getSelectedSensorVelocity() * (10.0 / Constants.Drivetrain.LEFT_TICKS_PER_REV);
+        return leftDriveMaster.getSelectedSensorVelocity() * (10.0 / Constants.Drivetrain.LEFT_TICKS_PER_REV);
     }
 
     public double getRightVelocityMetersPerSecond() {
-        return -rightDriveMaster.getSelectedSensorVelocity() * (10.0 / Constants.Drivetrain.RIGHT_TICKS_PER_REV);
+        return rightDriveMaster.getSelectedSensorVelocity() * (10.0 / Constants.Drivetrain.RIGHT_TICKS_PER_REV);
     }
 
     public double getAverageEncoderDistanceMeters() {
@@ -196,59 +182,6 @@ public class Drivetrain extends SubsystemBase {
         // resetOdometry(new Pose2d(3.195,-2.32, new Rotation2d(0.0)));
     }
 
-    public void driveTrajectory(Trajectory trajectory, boolean reversedTrajectory) {
-        pathTimer.reset();
-        pathTimer.start();
-        Trajectory.State currentStateTraj = trajectory.sample(pathTimer.get());
-        ChassisSpeeds ramseteChassisSpeeds;
-
-        if (!reversedTrajectory) {
-            ramseteChassisSpeeds = ramseteController.calculate(
-                odometry.getPoseMeters(), 
-                currentStateTraj);
-        }
-        else {
-            ramseteChassisSpeeds = ramseteController.calculate(
-                odometry.getPoseMeters().transformBy(new Transform2d(new Translation2d(0, 0), new Rotation2d(Math.PI))), 
-                currentStateTraj);
-        }
-        DifferentialDriveWheelSpeeds ramseteDSpeeds = Constants.Drivetrain.kDriveKinematics.toWheelSpeeds(ramseteChassisSpeeds);
-
-        double leftSetpoint;
-        double rightSetpoint;
-
-        if (!reversedTrajectory) {
-            leftSetpoint = ramseteDSpeeds.leftMetersPerSecond;
-            rightSetpoint = ramseteDSpeeds.rightMetersPerSecond;
-        }
-        else {
-            leftSetpoint = -ramseteDSpeeds.rightMetersPerSecond;
-            rightSetpoint = -ramseteDSpeeds.leftMetersPerSecond;
-        }
-
-        // use P to acquire desired velocity and feedforward to acquire desired velocity
-        double ramseteLeftError = leftSetpoint - leftDriveMaster.getSelectedSensorVelocity();
-        double ramseteRightError = rightSetpoint - rightDriveMaster.getSelectedSensorVelocity();
-
-        double leftVolts = ramseteLeftError * 0.01 + feedforward.calculate(leftSetpoint);
-        double rightVolts = ramseteRightError * 0.01 + feedforward.calculate(rightSetpoint);
-
-        System.out.println("Left " + leftVolts);
-        System.out.println("Right " + rightVolts);
-
-        this.tankDriveVolts(
-            rightVolts,
-            leftVolts
-        );
-
-        // this.tankDrive(leftVolts, rightVolts);
-
-        if (trajectory.getTotalTimeSeconds() <= pathTimer.get()) {
-            pathTimer.stop();
-            trajectory = null;
-        }
-    }
-
     @Override
     public void periodic() {
         odometry.update(
@@ -256,15 +189,11 @@ public class Drivetrain extends SubsystemBase {
             getLeftDistanceMeters(), 
             getRightDistanceMeters()
         );
-        // if(!(CommandScheduler.getInstance().isScheduled(RobotContainer.getGyroAlign()))) {
-        //     this.targetHeading = getHeading();
-        // }
-        // this.targetHeading = getHeading();
-        SmartDashboard.putNumber("[Drivetrain]-Target-Heading", getTargetHeading());
+
         SmartDashboard.putNumber("[Drivetrain]-Heading", getHeading());
         SmartDashboard.putNumber("[Drivetrain]-Left-Dist-Meters", getLeftDistanceMeters());
         SmartDashboard.putNumber("[Drivetrain]-Right-Dist-Meters", getRightDistanceMeters());
-        SmartDashboard.putNumber("[Drivetrain]-Left-Ticks", -this.leftDriveMaster.getSelectedSensorPosition());
-        SmartDashboard.putNumber("[Drivetrain]-Right-Ticks", -this.rightDriveMaster.getSelectedSensorPosition());
+        SmartDashboard.putNumber("[Drivetrain]-Left-Ticks", this.leftDriveMaster.getSelectedSensorPosition());
+        SmartDashboard.putNumber("[Drivetrain]-Right-Ticks", this.rightDriveMaster.getSelectedSensorPosition());
     }
 }

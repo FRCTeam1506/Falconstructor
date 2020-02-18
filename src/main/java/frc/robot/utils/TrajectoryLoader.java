@@ -1,7 +1,5 @@
 package frc.robot.utils;
 
-import frc.robot.Constants.*;
-
 import java.io.IOException;
 import java.nio.file.Path;
 

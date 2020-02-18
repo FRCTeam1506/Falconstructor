@@ -8,38 +8,29 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.Limelight.Piplelines;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the name of this class or
+ * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
 public class Robot extends TimedRobot {
-
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
 
   /**
-   * This function is run when the robot is first started up and should be used
-   * for any initialization code.
+   * This function is run when the robot is first started up and should be used for any
+   * initialization code.
    */
   @Override
   public void robotInit() {
-    System.out.println("Robot initializing ...");
-    // RobotContainer.limelight.setPipeline(5);
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our
+    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    RobotContainer.limelight.setPipeline(Piplelines.FarTargeting);
-    RobotContainer.drivetrain.resetEncoders();
   }
 
   /**
@@ -62,20 +53,19 @@ public class Robot extends TimedRobot {
    * This function is called once each time the robot enters Disabled mode.
    */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   /**
    * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
    */
   @Override
   public void autonomousInit() {
-    RobotContainer.drivetrain.resetAll();
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    m_autonomousCommand = m_robotContainer.getAutoCommand();
-    // m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -87,7 +77,8 @@ public class Robot extends TimedRobot {
    * This function is called periodically during autonomous.
    */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
   public void teleopInit() {
@@ -105,10 +96,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    dashboardDrivetrain();
-    dashboardShooter();
-    dashboardTurret();
-    dashboardLimelight();
   }
 
   @Override
@@ -121,29 +108,6 @@ public class Robot extends TimedRobot {
    * This function is called periodically during test mode.
    */
   @Override
-  public void testPeriodic() {}
-
-  private void dashboardDrivetrain() {
-    SmartDashboard.putNumber("[Drivetrain]-Left-Encoder", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
-    SmartDashboard.putNumber("[Drivetrain]-Right-Encoder", RobotContainer.drivetrain.rightDriveMaster.getSelectedSensorPosition());
+  public void testPeriodic() {
   }
-
-  private void dashboardShooter() {
-    SmartDashboard.putNumber("[Shooter]-Power", RobotContainer.shooter.shooter1.getMotorOutputPercent());
-    SmartDashboard.putNumber("[Shooter]-Velocity", RobotContainer.shooter.shooter1.getSelectedSensorVelocity());
-    SmartDashboard.putNumber("[Shooter]-Error", RobotContainer.shooter.shooter1.getClosedLoopError());
-  }
-
-  private void dashboardTurret() {
-    // SmartDashboard.putNumber("[Turret]-Encoder", RobotContainer.drivetrain.leftDriveMaster.getSelectedSensorPosition());
-  }
-
-  private void dashboardLimelight() {
-    SmartDashboard.putNumber("[Limelight]-X", RobotContainer.limelight.getX());
-    SmartDashboard.putNumber("[Limelight]-Y", RobotContainer.limelight.getY());
-    SmartDashboard.putNumber("[Limelight]-Area", RobotContainer.limelight.getArea());
-    SmartDashboard.putBoolean("[Limelight]-Target-Found", RobotContainer.limelight.isTargetFound());
-    SmartDashboard.putNumber("[Limelight]-Distance", RobotContainer.limelight.getDistance());
-  }
-  
 }
