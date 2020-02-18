@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.utils.NamedID;
 
 /**
@@ -36,8 +37,6 @@ public final class Constants {
     public static final class General {
         public static final String DEPLOY_PATH = Filesystem.getDeployDirectory().toString();
         public static final String SIM_PATH = Filesystem.getLaunchDirectory().toString();
-        public static final Double LEFT_TICKS_PER_REV = 2048.0; // 18600.0
-        public static final Double RIGHT_TICKS_PER_REV = 2048.0; // 9326 19500.0
     }
 
     public static final class Limelight {
@@ -54,20 +53,23 @@ public final class Constants {
         public static final NamedID RIGHT_DRIVE_MASTER_ID = new NamedID("Right-Drive-Master-ID", 12);
         public static final NamedID RIGHT_DRIVE_ID = new NamedID("Right-Drive-ID", 11);
 
+        public static final Double LEFT_TICKS_PER_REV = 150175.0 / Units.inchesToMeters(127); // 18600.0
+        public static final Double RIGHT_TICKS_PER_REV = 162088.0 / Units.inchesToMeters(141); // 9326 19500.0
+
         public static final Double WHEEL_CIRCUMFERENCE_METERS = 2.0 * Math.PI * 0.0762;
         public static final Double GEAR_RATIO = 1 / 9.46969696; // 9.4696969 // 1 / 0.66
 
-        public static final Double kTrackwidthMeters = 5.760433057155806; // 0.61
-        public static final Double MAX_VELOCITY = 0.25;
-        public static final Double MAX_ACCELERATION = 0.1;
+        public static final Double kTrackwidthMeters = 5.760433057155806; // 0.61 5.760433057155806
+        public static final Double MAX_VELOCITY = 2.0;
+        public static final Double MAX_ACCELERATION = 0.5;
 
         public static final Double MAX_VOLTS = 100.0;
 
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
 
-        public static final Double kS = 0.13; // 0.37
-        public static final Double kV = 0.1; // 0.224
-        public static final Double kA = 0.007; // 0.0109
+        public static final Double kS = 0.37; // 0.37
+        public static final Double kV = 0.224; // 0.224
+        public static final Double kA = 0.0109; // 0.0109
         public static final Double kP = 0.000439; // 0.000439
         public static final Double kD = 0.000183; // 0.000183
 

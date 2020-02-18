@@ -191,17 +191,17 @@ public class RobotContainer {
       new LimitedArcadeDrive(
         drivetrain,
         () -> driver.getRawAxis(Constants.Playstation.LeftYAxis.getID()),
-        () -> driver.getRawAxis(Constants.Playstation.RightXAxis.getID())
+        () -> -driver.getRawAxis(Constants.Playstation.RightXAxis.getID())
       )
     );
 
-    shooter.setDefaultCommand(
-      new Shoot(
-        shooter,
-        // () -> driver.getRawAxis(Playstation.RightYAxis.getID())
-        () -> 0.0
-      )
-    );
+    // shooter.setDefaultCommand(
+    //   new Shoot(
+    //     shooter,
+    //     // () -> driver.getRawAxis(Playstation.RightYAxis.getID())
+    //     () -> 0.0
+    //   )
+    // );
 
     intake.setDefaultCommand(
       new IntakeIntake(
@@ -277,30 +277,32 @@ public class RobotContainer {
   }
 
   public Command getAutoCommand() {
+
     Constants.AutonTrajectories auton = autoChooser.getSelected();
 
-    Trajectory trajectory = TrajectoryLoader.loadTrajectoryFromFile("v2");
+    Trajectory trajectory = TrajectoryLoader.loadTrajectoryFromFile("v4");
 
     RamseteCommand ramseteCommand = new RamseteCommand(
         trajectory,
-        drivetrain::getPose, 
-        new RamseteController(2.0, 0.7), 
+        drivetrain::getPose,
+        new RamseteController(1.7, 0.7),
         new SimpleMotorFeedforward(
             Constants.Drivetrain.kS,
             Constants.Drivetrain.kV,
             Constants.Drivetrain.kA
-        ), 
-        Constants.Drivetrain.kDriveKinematics, 
-        drivetrain::getWheelSpeeds, 
-        new PIDController(0.1, 0.0, 0.0), 
-        new PIDController(0.1, 0.0, 0.0), 
-        drivetrain::tankDriveVolts,
+        ),
+        Constants.Drivetrain.kDriveKinematics,
+        drivetrain::getWheelSpeeds,
+        new PIDController(5.0, 0.125, 0.04), // 0.004 0.11
+        new PIDController(5.0, 0.125, 0.04), 
+        drivetrain::tankDriveVolts, 
         drivetrain
     );
 
     // if(auton == AutonTrajectories.Test) return new TestAuto(drivetrain);
 
     return ramseteCommand.andThen(() -> drivetrain.tankDrive(0,0));
+    // return new TestAuto(drivetrain);
   }
 
   public void smartdashboard() {
@@ -312,5 +314,4 @@ public class RobotContainer {
   public static Command getGyroAlign() {
     return l_gyroAlign;
   }
-
 }

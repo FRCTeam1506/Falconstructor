@@ -61,8 +61,8 @@ public class Drivetrain extends SubsystemBase {
         this.leftDrive.follow(this.leftDriveMaster);
         this.rightDrive.follow(this.rightDriveMaster);
 
-        this.leftDriveMaster.setSensorPhase(true);
-        this.rightDriveMaster.setSensorPhase(true);
+        // this.leftDriveMaster.setSensorPhase(true);
+        // this.rightDriveMaster.setSensorPhase(true);
 
         this.leftDriveMaster.setInverted(false);
         this.rightDriveMaster.setInverted(true);
@@ -110,8 +110,8 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void limitedArcadeDrive(double fwd, double rot) {
-        this.leftDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd + rot) * 0.65, 3));
-        this.rightDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd - rot) * 0.65, 3));
+        this.leftDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd + rot) * 0.85, 3));
+        this.rightDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd - rot) * 0.85, 3));
     }
 
     public void arcadeDrive(double fwd, double rot) {
@@ -143,7 +143,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Double getHeading() {
-        return -Math.IEEEremainder(navx.getAngle(), 360);
+        return Math.IEEEremainder(navx.getAngle(), 360);
     }
 
     public Pose2d getPose() {
@@ -154,21 +154,31 @@ public class Drivetrain extends SubsystemBase {
         return navx.getRate();
     }
 
-    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-        return new DifferentialDriveWheelSpeeds((leftDriveMaster.getSelectedSensorVelocity() * Constants.Drivetrain.GEAR_RATIO * 10 / Constants.General.LEFT_TICKS_PER_REV) * Constants.Drivetrain.WHEEL_CIRCUMFERENCE_METERS, 
-            (rightDriveMaster.getSelectedSensorVelocity() * Constants.Drivetrain.GEAR_RATIO * 10 / Constants.General.RIGHT_TICKS_PER_REV) * Constants.Drivetrain.WHEEL_CIRCUMFERENCE_METERS);
-    }
-
     public double getLeftDistanceMeters() {
-        return (leftDriveMaster.getSelectedSensorPosition() / Constants.General.LEFT_TICKS_PER_REV ) * Constants.Drivetrain.WHEEL_CIRCUMFERENCE_METERS;
+        return -leftDriveMaster.getSelectedSensorPosition() / Constants.Drivetrain.LEFT_TICKS_PER_REV;
     }
 
     public double getRightDistanceMeters() {
-        return (rightDriveMaster.getSelectedSensorPosition() / Constants.General.RIGHT_TICKS_PER_REV ) * Constants.Drivetrain.WHEEL_CIRCUMFERENCE_METERS;
+        return -rightDriveMaster.getSelectedSensorPosition() / Constants.Drivetrain.RIGHT_TICKS_PER_REV;
+    }
+
+    public double getLeftVelocityMetersPerSecond() {
+        return -leftDriveMaster.getSelectedSensorVelocity() * (10.0 / Constants.Drivetrain.LEFT_TICKS_PER_REV);
+    }
+
+    public double getRightVelocityMetersPerSecond() {
+        return -rightDriveMaster.getSelectedSensorVelocity() * (10.0 / Constants.Drivetrain.RIGHT_TICKS_PER_REV);
     }
 
     public double getAverageEncoderDistanceMeters() {
         return ( ( getLeftDistanceMeters() + getRightDistanceMeters() ) / 2.0 );
+    }
+
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(
+            getLeftVelocityMetersPerSecond(), 
+            getRightVelocityMetersPerSecond()
+        );
     }
 
     public void resetGyro() {
@@ -178,6 +188,12 @@ public class Drivetrain extends SubsystemBase {
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
         odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
+    }
+
+    public void resetAll() {
+        resetEncoders();
+        resetGyro();
+        // resetOdometry(new Pose2d(3.195,-2.32, new Rotation2d(0.0)));
     }
 
     public void driveTrajectory(Trajectory trajectory, boolean reversedTrajectory) {
@@ -214,8 +230,8 @@ public class Drivetrain extends SubsystemBase {
         double ramseteLeftError = leftSetpoint - leftDriveMaster.getSelectedSensorVelocity();
         double ramseteRightError = rightSetpoint - rightDriveMaster.getSelectedSensorVelocity();
 
-        double leftVolts = ramseteLeftError * 0.001 + feedforward.calculate(leftSetpoint);
-        double rightVolts = ramseteRightError * 0.001 + feedforward.calculate(rightSetpoint);
+        double leftVolts = ramseteLeftError * 0.01 + feedforward.calculate(leftSetpoint);
+        double rightVolts = ramseteRightError * 0.01 + feedforward.calculate(rightSetpoint);
 
         System.out.println("Left " + leftVolts);
         System.out.println("Right " + rightVolts);
@@ -224,6 +240,8 @@ public class Drivetrain extends SubsystemBase {
             rightVolts,
             leftVolts
         );
+
+        // this.tankDrive(leftVolts, rightVolts);
 
         if (trajectory.getTotalTimeSeconds() <= pathTimer.get()) {
             pathTimer.stop();
@@ -246,7 +264,7 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("[Drivetrain]-Heading", getHeading());
         SmartDashboard.putNumber("[Drivetrain]-Left-Dist-Meters", getLeftDistanceMeters());
         SmartDashboard.putNumber("[Drivetrain]-Right-Dist-Meters", getRightDistanceMeters());
-        SmartDashboard.putNumber("[Drivetrain]-Left-Ticks", this.leftDriveMaster.getSelectedSensorPosition());
-        SmartDashboard.putNumber("[Drivetrain]-Right-Ticks", this.rightDriveMaster.getSelectedSensorPosition());
+        SmartDashboard.putNumber("[Drivetrain]-Left-Ticks", -this.leftDriveMaster.getSelectedSensorPosition());
+        SmartDashboard.putNumber("[Drivetrain]-Right-Ticks", -this.rightDriveMaster.getSelectedSensorPosition());
     }
 }

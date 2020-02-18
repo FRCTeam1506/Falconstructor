@@ -22,7 +22,6 @@ public class DriveTrajectory extends CommandBase {
     @Override
     public void initialize() {
         System.out.println("Running " + this.getClass().toString());
-        
     }
 
     // Called every time the scheduler runs while the command is scheduled.
