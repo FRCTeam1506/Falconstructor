@@ -19,7 +19,7 @@
 
 - **Shifters**
 
-- - High Gear
+- - **High Gear**
 - - Low Gear
 
 -----
