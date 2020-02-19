@@ -35,12 +35,12 @@ public class RobotContainer {
   private final Joystick operator = new Joystick(1);
 
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain drivetrain = new Drivetrain();
-  private final Shifter shifter = new Shifter();
-  private final Shooter shooter = new Shooter();
-  private final Intake intake = new Intake();
-  private final HorizIndexer horizIndexer = new HorizIndexer();
-  private final VertIndexer vertIndexer = new VertIndexer();
+  protected static final Drivetrain drivetrain = new Drivetrain();
+  protected static final Shifter shifter = new Shifter();
+  protected static final Shooter shooter = new Shooter();
+  protected static final Intake intake = new Intake();
+  protected static final HorizIndexer horizIndexer = new HorizIndexer();
+  protected static final VertIndexer vertIndexer = new VertIndexer();
 
   private final SendableChooser<Constants.Auto.Position> positionChooser = new SendableChooser<>();
   private final SendableChooser<Constants.Auto.Goal> goalChooser = new SendableChooser<>();

@@ -11,8 +11,8 @@ public class ExtendAndIntake extends ParallelCommandGroup {
         super(
             new Extend(intake),
             new SequentialCommandGroup(
-                new WaitCommand(0.5),
-                new IntakeIntake(intake)
+                new WaitCommand(0.3),
+                new IntakeIntake(intake).withTimeout(1.0)
             )
         );
     }
