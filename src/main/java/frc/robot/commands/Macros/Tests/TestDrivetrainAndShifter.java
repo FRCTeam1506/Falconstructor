@@ -14,14 +14,14 @@ public class TestDrivetrainAndShifter extends SequentialCommandGroup {
         super(
             new TankDrive(drivetrain, 0.5, 0.5).withTimeout(1.5),
             new ParallelCommandGroup(
-                new HoldSetToLowGear(shifter).withTimeout(1.5),
-                new TankDrive(drivetrain, 0.5, 0.5).withTimeout(1.5)
-            ),
+                new HoldSetToLowGear(shifter),
+                new TankDrive(drivetrain, 0.5, 0.5)
+            ).withTimeout(1.5),
             new TankDrive(drivetrain, -0.5, -0.5).withTimeout(1.5),
             new ParallelCommandGroup(
-                new HoldSetToLowGear(shifter).withTimeout(1.5),
-                new TankDrive(drivetrain, -0.5, -0.5).withTimeout(1.5)
-            )
+                new HoldSetToLowGear(shifter),
+                new TankDrive(drivetrain, -0.5, -0.5)
+            ).withTimeout(1.5)
         );
     }
 
