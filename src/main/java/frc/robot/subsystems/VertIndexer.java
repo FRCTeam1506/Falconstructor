@@ -24,6 +24,10 @@ public class VertIndexer extends SubsystemBase {
         this.indexer.set(ControlMode.PercentOutput, -0.85);
     }
 
+    public void stop() {
+        this.indexer.set(ControlMode.PercentOutput, 0.0);
+    }
+
     @Override
     public void periodic() {}
 

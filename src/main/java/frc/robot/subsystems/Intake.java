@@ -35,16 +35,24 @@ public class Intake extends SubsystemBase {
         this.intake.set(ControlMode.PercentOutput, -pwr);
     }
 
+    public void stopIntake() {
+        this.intake.set(ControlMode.PercentOutput, 0.0);
+    }
+
     public void retract() {
-        this.xfactor.set(false);
+        if(getState() != "Retracted") this.xfactor.set(false);
     }
 
     public void extend() {
-        this.xfactor.set(true);
+        if(getState() != "Extended") this.xfactor.set(true);
+    }
+
+    public String getState() {
+        return this.xfactor.get() ? "Extended" : "Retracted";
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putString("[Intake]-Xfactor-State", this.xfactor.get() ? "Extended" : "Retracted" );
+        SmartDashboard.putString("[Intake]-Xfactor-State", getState());
     }
 }

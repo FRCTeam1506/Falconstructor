@@ -30,6 +30,11 @@ public class HorizIndexer extends SubsystemBase {
         this.rightIndexer.set(ControlMode.PercentOutput, -0.85);
     }
 
+    public void stop() {
+        this.leftIndexer.set(ControlMode.PercentOutput, 0.0);
+        this.rightIndexer.set(ControlMode.PercentOutput, 0.0);
+    }
+
     @Override
     public void periodic() {}
 

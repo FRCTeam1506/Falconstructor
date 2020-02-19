@@ -81,8 +81,8 @@ public final class Constants {
     public static final class Turret {}
 
     public static final class Shooter {
-        public static final NamedID SHOOTER_1_ID = new NamedID("Shooter-1-ID", 0xa);
-        public static final NamedID SHOOTER_2_ID = new NamedID("Shooter-2-ID", 0xb);
+        public static final NamedID SHOOTER_1_ID = new NamedID("Shooter-1-ID", 2);
+        public static final NamedID SHOOTER_2_ID = new NamedID("Shooter-2-ID", 13);
 
         public static final Double kP = 0.037;
         public static final Double kI = 0.0;
@@ -91,17 +91,17 @@ public final class Constants {
     }
 
     public static final class Intake {
-        public static final NamedID INTAKE_ID = new NamedID("Intake-ID", 0xc);
-        public static final NamedID XFACTOR_ID = new NamedID("Xfactor-ID", 0xd);
+        public static final NamedID INTAKE_ID = new NamedID("Intake-ID", 4);
+        public static final NamedID XFACTOR_ID = new NamedID("Xfactor-ID", 1);
     }
 
     public static final class HorizIndexer {
-        public static final NamedID LEFT_INDEXER_ID = new NamedID("Left-Indexer-ID", 0xe);
-        public static final NamedID RIGHT_INDEXER_ID = new NamedID("Right-Indexer-ID", 0xf);
+        public static final NamedID LEFT_INDEXER_ID = new NamedID("Left-Indexer-ID", 5);
+        public static final NamedID RIGHT_INDEXER_ID = new NamedID("Right-Indexer-ID", 10);
     }
 
     public static final class VertIndexer {
-        public static final NamedID INDEXER_ID = new NamedID("Indexer-ID", 0xf1);
+        public static final NamedID INDEXER_ID = new NamedID("Indexer-ID", 11);
     }
 
     public static final class Playstation {
