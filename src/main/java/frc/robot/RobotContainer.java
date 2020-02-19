@@ -6,6 +6,7 @@ import frc.robot.commands.HorizIndexer.StopHorizIndexer;
 import frc.robot.commands.Intake.ExtendAndIntake;
 import frc.robot.commands.Intake.IntakeDefault;
 import frc.robot.commands.Shifter.SetToHighGear;
+import frc.robot.commands.Shifter.SetToLowGear;
 import frc.robot.commands.Shooter.Shoot;
 import frc.robot.commands.Shooter.StopShooter;
 import frc.robot.commands.VertIndexer.StopVertIndexer;
@@ -18,6 +19,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.VertIndexer;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -29,8 +31,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
 
-  private Joystick driver = new Joystick(0);
-  private Joystick operator = new Joystick(1);
+  private final Joystick driver = new Joystick(0);
+  private final Joystick operator = new Joystick(1);
 
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
@@ -39,6 +41,9 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final HorizIndexer horizIndexer = new HorizIndexer();
   private final VertIndexer vertIndexer = new VertIndexer();
+
+  private final SendableChooser<Constants.Auto.Position> positionChooser = new SendableChooser<>();
+  private final SendableChooser<Constants.Auto.Goal> goalChooser = new SendableChooser<>();
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -59,6 +64,7 @@ public class RobotContainer {
     new JoystickButton(driver, Constants.Playstation.XButton.getID()).whileHeld(new HorizIndex(horizIndexer));
     new JoystickButton(driver, Constants.Playstation.CircleButton.getID()).whileHeld(new VertIndex(vertIndexer));
     new JoystickButton(driver, Constants.Playstation.LeftBumper.getID()).whenHeld(new ExtendAndIntake(intake));
+    new JoystickButton(driver, Constants.Playstation.RightBumper.getID()).whenHeld(new SetToLowGear(shifter));
   }
 
   private void setDefaultCommands() {

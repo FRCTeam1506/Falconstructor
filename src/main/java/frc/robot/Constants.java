@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot;
 
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -27,6 +20,11 @@ import frc.robot.utils.NamedID;
 public final class Constants {
 
     public static final class General {}
+
+    public static final class Auto {
+        public static enum Position {}
+        public static enum Goal {}
+    }
 
     public static final class Drivetrain {
         public static final NamedID LEFT_DRIVE_MASTER_ID = new NamedID("Left-Drive-Master-ID", 0);
