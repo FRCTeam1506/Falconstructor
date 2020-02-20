@@ -17,8 +17,8 @@ public class Shooter extends SubsystemBase {
         this.shooter1.configFactoryDefault();
         this.shooter2.configFactoryDefault();
 
-        this.shooter1.setInverted(false);
-        this.shooter2.setInverted(true);
+        this.shooter1.setInverted(true);
+        this.shooter2.setInverted(false);
 
         this.shooter1.setNeutralMode(NeutralMode.Brake);
         this.shooter2.setNeutralMode(NeutralMode.Brake);

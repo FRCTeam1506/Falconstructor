@@ -85,7 +85,7 @@ public final class Constants {
         public static final Double kP = 0.037;
         public static final Double kI = 0.0;
         public static final Double kD = 0.0;
-        public static final Double kF = 0.049;
+        public static final Double kF = 0.065; // 0.049
     }
 
     public static final class Intake {

@@ -204,13 +204,21 @@ public class Drivetrain extends SubsystemBase {
         Double a2 = this.y;
         // return (h2 - h1) / Math.tan(a1 + a2);
         double dist = (h2 - h1) / (Math.tan((a1 + a2) * (Math.PI / 180)));
-        if(dist > 0) {
-            val = (double) Math.ceil((dist / 1000.0)) * 1000.0;
-            if(Math.abs(val) < 1) this.previousDist = val;
+        if(isTargetFound()) {
+            if(dist > 0) {
+                val = (double) Math.ceil((dist / 1000.0)) * 1000.0;
+                if(Math.abs(val) < 1) this.previousDist = val;
+            } else {
+                if(this.previousDist != null){
+                    val = this.previousDist;
+                } else {
+                    val = 0;
+                }
+            }
+            return val;
         } else {
-            val = this.previousDist;
+            return 0.0;
         }
-        return val;
     }
 
     public Double getTargetDistance() {

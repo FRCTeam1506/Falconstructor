@@ -17,11 +17,11 @@ public class VertIndexer extends SubsystemBase {
     }
 
     public void up() {
-        this.indexer.set(ControlMode.PercentOutput, 0.85);
+        this.indexer.set(ControlMode.PercentOutput, 0.3);
     }
 
     public void down() {
-        this.indexer.set(ControlMode.PercentOutput, -0.85);
+        this.indexer.set(ControlMode.PercentOutput, -0.3);
     }
 
     public void stop() {

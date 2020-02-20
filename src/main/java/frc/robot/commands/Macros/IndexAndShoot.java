@@ -13,7 +13,7 @@ public class IndexAndShoot extends ParallelCommandGroup {
     public IndexAndShoot(HorizIndexer horizIndexer, VertIndexer vertIndexer, Shooter shooter) {
 
         super(
-            new Shoot(shooter, 25000.0),
+            new Shoot(shooter, 50000.0),
             new SequentialCommandGroup(
                 new WaitCommand(0.5),
                 new Index(horizIndexer, vertIndexer)

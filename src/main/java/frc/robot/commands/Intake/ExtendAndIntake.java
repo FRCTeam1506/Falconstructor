@@ -12,7 +12,7 @@ public class ExtendAndIntake extends ParallelCommandGroup {
             new Extend(intake),
             new SequentialCommandGroup(
                 new WaitCommand(0.3),
-                new IntakeIntake(intake).withTimeout(1.0)
+                new IntakeIntake(intake)
             )
         );
     }

@@ -20,14 +20,14 @@ public class HorizIndexer extends SubsystemBase {
         this.rightIndexer.setInverted(false);
     }
 
-    public void run() {
-        this.leftIndexer.set(ControlMode.PercentOutput, 0.85);
-        this.rightIndexer.set(ControlMode.PercentOutput, 0.6);
+    public void rev() {
+        this.leftIndexer.set(ControlMode.PercentOutput, 0.5);
+        this.rightIndexer.set(ControlMode.PercentOutput, 0.3);
     }
 
-    public void rev() {
-        this.leftIndexer.set(ControlMode.PercentOutput, -0.6);
-        this.rightIndexer.set(ControlMode.PercentOutput, -0.85);
+    public void run() {
+        this.leftIndexer.set(ControlMode.PercentOutput, -0.3);
+        this.rightIndexer.set(ControlMode.PercentOutput, -0.5);
     }
 
     public void stop() {

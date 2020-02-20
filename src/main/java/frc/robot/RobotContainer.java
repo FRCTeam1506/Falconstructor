@@ -1,10 +1,13 @@
 package frc.robot;
 
+import frc.robot.commands.Drivetrain.Align;
 import frc.robot.commands.Drivetrain.ArcadeDrive;
 import frc.robot.commands.HorizIndexer.HorizIndex;
 import frc.robot.commands.HorizIndexer.StopHorizIndexer;
 import frc.robot.commands.Intake.ExtendAndIntake;
 import frc.robot.commands.Intake.IntakeDefault;
+import frc.robot.commands.Macros.IndexAndShoot;
+import frc.robot.commands.Shifter.DefaultSetToHighGear;
 import frc.robot.commands.Shifter.SetToHighGear;
 import frc.robot.commands.Shifter.SetToLowGear;
 import frc.robot.commands.Shooter.Shoot;
@@ -60,24 +63,27 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    new JoystickButton(driver, Constants.Playstation.TriangleButton.getID()).whileHeld(new Shoot(shooter, 25000.0));
+    new JoystickButton(driver, Constants.Playstation.TriangleButton.getID()).whileHeld(new Shoot(shooter, 36000.0));
     new JoystickButton(driver, Constants.Playstation.XButton.getID()).whileHeld(new HorizIndex(horizIndexer));
     new JoystickButton(driver, Constants.Playstation.CircleButton.getID()).whileHeld(new VertIndex(vertIndexer));
-    new JoystickButton(driver, Constants.Playstation.LeftBumper.getID()).whenHeld(new ExtendAndIntake(intake));
-    new JoystickButton(driver, Constants.Playstation.RightBumper.getID()).whenHeld(new SetToLowGear(shifter));
+    new JoystickButton(driver, Constants.Playstation.LeftBumper.getID()).whileHeld(new ExtendAndIntake(intake));
+    new JoystickButton(driver, Constants.Playstation.RightBumper.getID()).whileHeld(new SetToLowGear(shifter));
+    new JoystickButton(driver, Constants.Playstation.BigButton.getID()).whileHeld(new IndexAndShoot(horizIndexer, vertIndexer, shooter));
+    new JoystickButton(driver, Constants.Playstation.SquareButton.getID()).whenPressed(new Align(drivetrain).withTimeout(3.0));
   }
 
   private void setDefaultCommands() {
+
     drivetrain.setDefaultCommand(
       new ArcadeDrive(
         drivetrain,
-        () -> driver.getRawAxis(Constants.Playstation.LeftYAxis.getID()),
+        () -> -driver.getRawAxis(Constants.Playstation.LeftYAxis.getID()),
         () -> driver.getRawAxis(Constants.Playstation.RightXAxis.getID())
       )
     );
 
     shifter.setDefaultCommand(
-      new SetToHighGear(shifter)
+      new DefaultSetToHighGear(shifter)
     );
 
     shooter.setDefaultCommand(

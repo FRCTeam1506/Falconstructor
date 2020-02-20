@@ -2,6 +2,8 @@
 
 ## Things to work on
 
+- Shooter PIDF Tuning
+- Robot Characterization
 - test to TurnToAngle
 - ~~test distance~~
 - ~~test standard align~~
