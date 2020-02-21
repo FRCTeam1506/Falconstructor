@@ -3,6 +3,7 @@ package frc.robot;
 import frc.robot.commands.Drivetrain.Align;
 import frc.robot.commands.Drivetrain.ArcadeDrive;
 import frc.robot.commands.HorizIndexer.HorizIndex;
+import frc.robot.commands.HorizIndexer.HorizIndexLeft;
 import frc.robot.commands.HorizIndexer.StopHorizIndexer;
 import frc.robot.commands.Intake.ExtendAndIntake;
 import frc.robot.commands.Intake.IntakeDefault;
@@ -63,8 +64,8 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    new JoystickButton(driver, Constants.Playstation.TriangleButton.getID()).whileHeld(new Shoot(shooter, 36000.0));
-    new JoystickButton(driver, Constants.Playstation.XButton.getID()).whileHeld(new HorizIndex(horizIndexer));
+    new JoystickButton(driver, Constants.Playstation.TriangleButton.getID()).whileHeld(new Shoot(shooter, 22000.0));
+    new JoystickButton(driver, Constants.Playstation.XButton.getID()).whileHeld(new HorizIndexLeft(horizIndexer));
     new JoystickButton(driver, Constants.Playstation.CircleButton.getID()).whileHeld(new VertIndex(vertIndexer));
     new JoystickButton(driver, Constants.Playstation.LeftBumper.getID()).whileHeld(new ExtendAndIntake(intake));
     new JoystickButton(driver, Constants.Playstation.RightBumper.getID()).whileHeld(new SetToLowGear(shifter));

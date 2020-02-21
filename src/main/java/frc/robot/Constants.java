@@ -82,10 +82,10 @@ public final class Constants {
         public static final NamedID SHOOTER_1_ID = new NamedID("Shooter-1-ID", 2);
         public static final NamedID SHOOTER_2_ID = new NamedID("Shooter-2-ID", 13);
 
-        public static final Double kP = 0.037;
+        public static final Double kP = 0.037; // 0.037
         public static final Double kI = 0.0;
         public static final Double kD = 0.0;
-        public static final Double kF = 0.065; // 0.049
+        public static final Double kF = 0.07; // 0.065
     }
 
     public static final class Intake {

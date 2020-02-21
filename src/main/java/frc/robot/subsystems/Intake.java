@@ -20,7 +20,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void intakeFwd() {
-        this.intake.set(ControlMode.PercentOutput, 0.85);
+        this.intake.set(ControlMode.PercentOutput, 0.4);
     }
 
     public void intakeFwd(double pwr) {
@@ -28,7 +28,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void intakeRev() {
-        this.intake.set(ControlMode.PercentOutput, -0.85);
+        this.intake.set(ControlMode.PercentOutput, -0.4);
     }
 
     public void intakeRev(double pwr) {
