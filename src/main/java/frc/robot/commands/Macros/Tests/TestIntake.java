@@ -12,14 +12,7 @@ public class TestIntake extends SequentialCommandGroup {
 
     public TestIntake(Intake intake) {
         super(
-            new ExtendAndIntake(intake).withTimeout(2.0),
-            new ParallelCommandGroup(
-                new Extend(intake),
-                new SequentialCommandGroup(
-                    new WaitCommand(0.3),
-                    new IntakeIntake(intake, -0.9).withTimeout(1.0)
-                )
-            )
+            new ExtendAndIntake(intake).withTimeout(2.0)
         );
     }
 

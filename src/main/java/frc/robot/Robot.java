@@ -101,9 +101,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    (new TestMaster(RobotContainer.drivetrain, RobotContainer.shifter, RobotContainer.intake, RobotContainer.horizIndexer, RobotContainer.vertIndexer, RobotContainer.shooter)).schedule();
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    (new TestMaster(RobotContainer.drivetrain, RobotContainer.shifter, RobotContainer.intake, RobotContainer.horizIndexer, RobotContainer.vertIndexer, RobotContainer.shooter)).schedule();
   }
 
   /**

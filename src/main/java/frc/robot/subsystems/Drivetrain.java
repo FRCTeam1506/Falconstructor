@@ -115,8 +115,8 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void arcadeDrive(double fwd, double rot) {
-        this.leftDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd + rot), 3));
-        this.rightDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd - rot), 3));
+        this.leftDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd + rot), 3) * 0.6);
+        this.rightDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd - rot), 3) * 0.6);
     }
 
     public void regArcadeDrive(double fwd, double rot) {
@@ -127,6 +127,14 @@ public class Drivetrain extends SubsystemBase {
     public void stop() {
         this.leftDriveMaster.set(ControlMode.PercentOutput, 0.0);
         this.rightDriveMaster.set(ControlMode.PercentOutput, 0.0);
+    }
+
+    public double getRawLeftDistance() {
+        return this.leftDriveMaster.getSelectedSensorPosition();
+    }
+
+    public double getRawRightDistance() {
+        return this.rightDriveMaster.getSelectedSensorPosition();
     }
 
     public void resetEncoders() {

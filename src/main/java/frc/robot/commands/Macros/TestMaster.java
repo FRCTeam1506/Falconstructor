@@ -18,8 +18,8 @@ public class TestMaster extends SequentialCommandGroup {
         super(
             new TestDrivetrainAndShifter(drivetrain, shifter),
             new TestIntake(intake),
-            new TestIndexer(horizIndexer, vertIndexer),
-            new TestShooter(shooter)
+            new TestIndexer(horizIndexer, vertIndexer)
+            // new TestShooter(shooter)
         );
     }
 

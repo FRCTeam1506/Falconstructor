@@ -1,20 +1,32 @@
 package frc.robot;
 
+import frc.robot.Constants.Auto.Position;
+import frc.robot.commands.Auton.LeftAuton;
+import frc.robot.commands.Auton.MiddleAuton;
+import frc.robot.commands.Auton.Nothing;
+import frc.robot.commands.Auton.RightAuton;
 import frc.robot.commands.Drivetrain.Align;
 import frc.robot.commands.Drivetrain.ArcadeDrive;
 import frc.robot.commands.HorizIndexer.HorizIndex;
 import frc.robot.commands.HorizIndexer.HorizIndexLeft;
+import frc.robot.commands.HorizIndexer.HorizIndexRev;
+import frc.robot.commands.HorizIndexer.HorizIndexRevCycle;
 import frc.robot.commands.HorizIndexer.StopHorizIndexer;
 import frc.robot.commands.Intake.ExtendAndIntake;
+import frc.robot.commands.Intake.ExtendAndOutake;
 import frc.robot.commands.Intake.IntakeDefault;
 import frc.robot.commands.Macros.IndexAndShoot;
+import frc.robot.commands.Macros.Unjam;
 import frc.robot.commands.Shifter.DefaultSetToHighGear;
+import frc.robot.commands.Shifter.DefaultSetToLowGear;
 import frc.robot.commands.Shifter.SetToHighGear;
 import frc.robot.commands.Shifter.SetToLowGear;
 import frc.robot.commands.Shooter.Shoot;
 import frc.robot.commands.Shooter.StopShooter;
 import frc.robot.commands.VertIndexer.StopVertIndexer;
 import frc.robot.commands.VertIndexer.VertIndex;
+import frc.robot.commands.VertIndexer.VertIndexRev;
+
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.HorizIndexer;
 import frc.robot.subsystems.Intake;
@@ -65,13 +77,19 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     new JoystickButton(driver, Constants.Playstation.TriangleButton.getID()).whileHeld(new Shoot(shooter, 22000.0));
-    new JoystickButton(driver, Constants.Playstation.XButton.getID()).whileHeld(new HorizIndexLeft(horizIndexer));
+    new JoystickButton(driver, Constants.Playstation.XButton.getID()).whileHeld(new HorizIndex(horizIndexer));
     new JoystickButton(driver, Constants.Playstation.CircleButton.getID()).whileHeld(new VertIndex(vertIndexer));
-    new JoystickButton(driver, Constants.Playstation.LeftBumper.getID()).whileHeld(new ExtendAndIntake(intake));
-    new JoystickButton(driver, Constants.Playstation.RightBumper.getID()).whileHeld(new SetToLowGear(shifter));
-    new JoystickButton(driver, Constants.Playstation.BigButton.getID()).whileHeld(new IndexAndShoot(horizIndexer, vertIndexer, shooter));
+    new JoystickButton(operator, Constants.Playstation.LeftBumper.getID()).whileHeld(new ExtendAndIntake(intake));
+    new JoystickButton(driver, Constants.Playstation.RightBumper.getID()).whileHeld(new SetToHighGear(shifter));
+    new JoystickButton(operator, Constants.Playstation.RightBumper.getID()).whileHeld(new IndexAndShoot(intake, horizIndexer, vertIndexer, shooter));
     new JoystickButton(driver, Constants.Playstation.SquareButton.getID()).whenPressed(new Align(drivetrain).withTimeout(3.0));
+    // new JoystickButton(operator, Constants.Playstation.XButton.getID()).whileHeld(new VertIndexRev(vertIndexer));
+    // new JoystickButton(operator, Constants.Playstation.CircleButton.getID()).whileHeld(new HorizIndexRev(horizIndexer));
+    new JoystickButton(operator, Constants.Playstation.XButton.getID()).whileHeld(new Unjam(horizIndexer, vertIndexer, intake));
+    new JoystickButton(operator, Constants.Playstation.CircleButton.getID()).whileHeld(new ExtendAndOutake(intake));
+    new JoystickButton(operator, Constants.Playstation.TriangleButton.getID()).whileHeld(new HorizIndexRevCycle(horizIndexer));
   }
+
 
   private void setDefaultCommands() {
 
@@ -84,7 +102,7 @@ public class RobotContainer {
     );
 
     shifter.setDefaultCommand(
-      new DefaultSetToHighGear(shifter)
+      new DefaultSetToLowGear(shifter)
     );
 
     shooter.setDefaultCommand(
@@ -102,13 +120,23 @@ public class RobotContainer {
     vertIndexer.setDefaultCommand(
       new StopVertIndexer(vertIndexer)
     );
+
   }
 
-  private void setupAutonChooser() {}
+  private void setupAutonChooser() {
+    positionChooser.setDefaultOption("Nothing", Position.Nothing);
+    positionChooser.addOption("Left", Position.Left);
+    positionChooser.addOption("Middle", Position.Middle);
+    positionChooser.addOption("Right", Position.Right);
+  }
 
 
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return null;
+    Position pos = positionChooser.getSelected();
+    if(pos == Position.Nothing) return new Nothing();
+    else if(pos == Position.Left) return new LeftAuton(drivetrain, intake, horizIndexer, vertIndexer, shooter);
+    else if(pos == Position.Middle) return new MiddleAuton(drivetrain, intake, horizIndexer, vertIndexer, shooter);
+    else if(pos == Position.Right) return new RightAuton(drivetrain, intake, horizIndexer, vertIndexer, shooter);
+    else return new Nothing();
   }
 }

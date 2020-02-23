@@ -4,17 +4,17 @@ import frc.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class IntakeIntake extends CommandBase {
+public class IntakeOutake extends CommandBase {
 
     private final Intake m_intake;
     private final Double m_power;
 
-    public IntakeIntake(Intake intake) {
+    public IntakeOutake(Intake intake) {
         m_intake = intake;
-        m_power = 0.5 ; // 0.65
+        m_power = 0.65 ; // 0.9
     }
 
-    public IntakeIntake(Intake intake, Double pwr) {
+    public IntakeOutake(Intake intake, Double pwr) {
         m_intake = intake;
         m_power = pwr;
         addRequirements(intake);
@@ -22,7 +22,7 @@ public class IntakeIntake extends CommandBase {
 
     @Override
     public void initialize() {
-        m_intake.intakeFwd(m_power);
+        m_intake.intakeRev(m_power);
     }
 
 }

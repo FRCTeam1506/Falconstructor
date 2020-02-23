@@ -22,7 +22,12 @@ public final class Constants {
     public static final class General {}
 
     public static final class Auto {
-        public static enum Position {}
+        public static enum Position {
+            Nothing,
+            Left,
+            Middle,
+            Right
+        }
         public static enum Goal {}
     }
 

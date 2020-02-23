@@ -4,7 +4,8 @@
 
 - Shooter PIDF Tuning
 - Robot Characterization
-- test to TurnToAngle
+- 
+- ~~test to TurnToAngle~~
 - ~~test distance~~
 - ~~test standard align~~
 - make pid for gyro align + ~~test gyro align~~
