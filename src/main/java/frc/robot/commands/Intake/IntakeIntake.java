@@ -1,8 +1,11 @@
 package frc.robot.commands.Intake;
 
+import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 public class IntakeIntake extends CommandBase {
 
@@ -20,9 +23,19 @@ public class IntakeIntake extends CommandBase {
         addRequirements(intake);
     }
 
+    private boolean getReverse() {
+        return new POVButton(RobotContainer.driver, 0).get();
+    }
+
     @Override
     public void initialize() {
-        m_intake.intakeFwd(m_power);
+        if(getReverse()) m_intake.intakeRev(m_power);
+        else m_intake.intakeFwd(m_power);
     }
+
+    // @Override
+    // public void execute() {
+        
+    // }
 
 }

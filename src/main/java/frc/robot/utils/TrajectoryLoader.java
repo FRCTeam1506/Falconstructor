@@ -15,10 +15,11 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 public class TrajectoryLoader {
 
     public static Trajectory loadTrajectoryFromFile(String filename) {
-        Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve("trajectories/output/" + filename + ".wpilib.json");
+        Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve("output/" + filename + ".wpilib.json");
         Trajectory trajectory = null;
 
         try {
+            System.out.println(trajectoryPath);
             trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
         } catch (IOException e) {
             DriverStation.reportError("Unable to open trajectory: " + filename, e.getStackTrace());

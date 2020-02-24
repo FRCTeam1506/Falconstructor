@@ -5,6 +5,7 @@ import frc.robot.Constants;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -12,6 +13,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
@@ -40,6 +42,8 @@ public class Drivetrain extends SubsystemBase {
     private Integer pipeline;
 
     private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+
+    private PIDController leftDrivePID, rightDrivePID;
 
     public enum Piplelines {
         NearTargeting,
@@ -251,6 +255,11 @@ public class Drivetrain extends SubsystemBase {
     }
 
     //? Trajectory
+
+    public void setDriveStates(TrapezoidProfile.State left, TrapezoidProfile.State right) {
+        // this.tankDrive(leftDrivePID.setSetpoint(left.position), rightDrivePID.setSetpoint(right.position));
+    }
+
     public Double getHeading() {
         return Math.IEEEremainder(navx.getAngle(), 360);
     }
