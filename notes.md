@@ -3,8 +3,10 @@
 ## Things to work on
 
 - Shooter PIDF Tuning
+- Re-tune limelight
 - Robot Characterization
-- 
+- Work on Consistent Distance
+- Driver holds button -- robot starts swiftly turning
 - ~~test to TurnToAngle~~
 - ~~test distance~~
 - ~~test standard align~~

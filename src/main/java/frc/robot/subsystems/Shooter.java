@@ -4,6 +4,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -42,6 +47,8 @@ public class Shooter extends SubsystemBase {
         this.shooter2.config_kI(0, Constants.Shooter.kI);
         this.shooter2.config_kD(0, Constants.Shooter.kD);
         this.shooter2.config_kF(0, Constants.Shooter.kF);
+
+        dashboard();
     }
 
     private void setPower(Double pwr) {
@@ -72,6 +79,13 @@ public class Shooter extends SubsystemBase {
 
     public void stopShooter() {
         this.setPower(0.0);
+    }
+
+    private void dashboard() {
+        ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
+        tab.addNumber("Power", () -> this.shooter1.getMotorOutputPercent());
+        tab.addNumber("Velocity", () -> this.shooter1.getSelectedSensorVelocity());
+        tab.addNumber("Error", () -> this.shooter1.getClosedLoopError());
     }
 
     @Override

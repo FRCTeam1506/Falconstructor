@@ -6,6 +6,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -17,10 +19,12 @@ public class Intake extends SubsystemBase {
     public Intake() {
         this.intake.configFactoryDefault();
         this.intake.setInverted(false);
+
+        dashboard();
     }
 
     public void intakeFwd() {
-        this.intake.set(ControlMode.PercentOutput, 0.4);
+        this.intake.set(ControlMode.PercentOutput, 0.55);
     }
 
     public void intakeFwd(double pwr) {
@@ -28,7 +32,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void intakeRev() {
-        this.intake.set(ControlMode.PercentOutput, -0.4);
+        this.intake.set(ControlMode.PercentOutput, -0.55);
     }
 
     public void intakeRev(double pwr) {
@@ -49,6 +53,11 @@ public class Intake extends SubsystemBase {
 
     public String getState() {
         return this.xfactor.get() ? "Extended" : "Retracted";
+    }
+
+    private void dashboard() {
+        ShuffleboardTab tab = Shuffleboard.getTab("Intake");
+        tab.addString("State", () -> this.getState());
     }
 
     @Override

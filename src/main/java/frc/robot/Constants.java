@@ -28,7 +28,13 @@ public final class Constants {
             Middle,
             Right
         }
-        public static enum Goal {}
+        public static enum Goal {
+            Safe,
+            Ambitious,
+        }
+        public static enum Test {
+
+        }
     }
 
     public static final class Drivetrain {
@@ -40,11 +46,11 @@ public final class Constants {
         public static final Double LEFT_TICKS_PER_REV = 193811.0 / Units.inchesToMeters(107.5); // 18600.0
         public static final Double RIGHT_TICKS_PER_REV = 199179.0 / Units.inchesToMeters(113); // 9326 19500.0
 
-        public static final Double MAX_VELOCITY = 2.0;
-        public static final Double MAX_ACCELERATION = 0.5;
+        public static final Double MAX_VELOCITY = 0.3048; // 1 ft
+        public static final Double MAX_ACCELERATION = 0.1;
         public static final Double MAX_VOLTS = 100.0;
 
-        public static final Double kTrackwidthMeters = 0.635; // 4.211691140585359
+        public static final Double kTrackwidthMeters = 0.635; // 4.211691140585359 0.635
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
 
         public static final Double kS = 0.843; // 0.37
@@ -64,9 +70,9 @@ public final class Constants {
 
         public static final TrajectoryConfig config = new TrajectoryConfig(MAX_VELOCITY, MAX_ACCELERATION).setKinematics(kDriveKinematics).addConstraint(autoVoltageConstraint);
     
-        public static final double[] HEADING_PID = {0.015, 0.03, 0.0031};
+        public static final double[] HEADING_PID = {0.014, 0.011, 0.0023}; // 0.014 0.011 0.0023 0.014 0.013 0.0033
 
-        public static final double TURN_TOLERANCE = 0.01;
+        public static final double TURN_TOLERANCE = 0.2; // 0.01
         public static final double TURN_RATE_TOLERANCE = 10.0;
 
         public static final double MAX_TURN_RATE = 100.0;
@@ -79,6 +85,8 @@ public final class Constants {
 
         public static final double MAX_DIST_VEL = 10.0;
         public static final double MAX_DIST_ACCEL = 30.0;
+
+        public static final double[] STABILIZATION_PID = {0.3, 0.0, 0.003};
     }
 
     public static final class Turret {}
@@ -90,7 +98,7 @@ public final class Constants {
         public static final Double kP = 0.037; // 0.037
         public static final Double kI = 0.0;
         public static final Double kD = 0.0;
-        public static final Double kF = 0.08; // 0.07
+        public static final Double kF = 0.1; // 0.07
     }
 
     public static final class Intake {

@@ -17,11 +17,11 @@ public class MiddleAuton extends SequentialCommandGroup {
 
     public MiddleAuton(Drivetrain drivetrain, Intake intake, HorizIndexer horizIndexer, VertIndexer vertIndexer, Shooter shooter) {
         super(
-            new TankDrive(drivetrain, -0.25, -0.27).withTimeout(1.3),
+            new TankDrive(drivetrain, -0.25, -0.27).withTimeout(0.78),
             new ParallelCommandGroup(
                 new Shoot(shooter, 23000.0),
                 new SequentialCommandGroup(
-                    new Align(drivetrain),
+                    new Align(drivetrain, 1.0).withTimeout(3.0),
                     new Index(horizIndexer, vertIndexer, intake)
                 )
             )

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -12,8 +13,11 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
@@ -57,6 +61,8 @@ public class Drivetrain extends SubsystemBase {
     //? Gyro
     private final AHRS navx = new AHRS(SPI.Port.kMXP);
 
+    private double targetHeading;
+
     //? Trajectory
     private DifferentialDriveOdometry odometry;
     private RamseteController ramseteController;
@@ -83,6 +89,12 @@ public class Drivetrain extends SubsystemBase {
         this.leftDriveMaster.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
         this.rightDriveMaster.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
 
+        this.leftDrive.setNeutralMode(NeutralMode.Brake);
+        this.rightDrive.setNeutralMode(NeutralMode.Brake);
+
+        this.leftDrive.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
+        this.rightDrive.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
+
         this.targetDistance = 5000.0;
 
         resetEncoders();
@@ -90,9 +102,38 @@ public class Drivetrain extends SubsystemBase {
         this.feedforward = new SimpleMotorFeedforward(Constants.Drivetrain.kS, Constants.Drivetrain.kV, Constants.Drivetrain.kA);
         this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
         this.ramseteController = new RamseteController(2.0, 0.7);
+
+        dashboard();
+
+        // Shuffleboard.getTab("Drivetrain").addNumber("Target-Distance", () -> getTargetDistance());
+        // Shuffleboard.getTab("Drivetrain").addNumber("Distance", () -> getDistance());
+ 
+        // Shuffleboard.getTab("Drivetrain").addNumber("Heading", () -> getHeading());
+        // Shuffleboard.getTab("Drivetrain").addNumber("Left-Dist-Meters", () -> getLeftDistanceMeters());
+        // Shuffleboard.getTab("Drivetrain").addNumber("Right-Dist-Meters", () -> getRightDistanceMeters());
+        // Shuffleboard.getTab("Drivetrain").addNumber("Left-Ticks", () -> this.leftDriveMaster.getSelectedSensorPosition());
+        // Shuffleboard.getTab("Drivetrain").addNumber("Right-Ticks", () -> this.rightDriveMaster.getSelectedSensorPosition());
+ 
+        // Shuffleboard.getTab("Drivetrain").addNumber("Left-Drive-Master-Temp", () -> this.leftDriveMaster.getTemperature());
+        // Shuffleboard.getTab("Drivetrain").addNumber("Left-Drive-Temp", () -> this.leftDrive.getTemperature());
+        // Shuffleboard.getTab("Drivetrain").addNumber("Right-Drive-Master-Temp", () -> this.rightDriveMaster.getTemperature());
+        // Shuffleboard.getTab("Drivetrain").addNumber("Right-Drive-Temp", () -> this.rightDrive.getTemperature());
+        // Shuffleboard.getTab("Drivetrain").addNumber("Max-Temp", () -> Math.max(Math.max(this.leftDriveMaster.getTemperature(), this.leftDrive.getTemperature()), Math.max(this.rightDriveMaster.getTemperature(), this.rightDrive.getTemperature())));
+
+        // this.targetHeading = getHeading(); 
     }
 
     //? Drive
+    // public void setLeftPwr(double pwr) {
+    //     this.leftDriveMaster.set(ControlMode.PercentOutput, pwr);
+    //     this.leftDrive.set(ControlMode.PercentOutput, pwr);
+    // }
+
+    // public void setRightPwr(double pwr) {
+    //     this.rightDriveMaster.set(ControlMode.PercentOutput, pwr);
+    //     this.rightDrive.set(ControlMode.PercentOutput, pwr);
+    // }
+
     public void fwd(double pwr) {
         this.leftDriveMaster.set(ControlMode.PercentOutput, pwr);
         this.rightDriveMaster.set(ControlMode.PercentOutput, pwr);
@@ -113,14 +154,25 @@ public class Drivetrain extends SubsystemBase {
         this.rightDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(-rightVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
     }
 
+    public void tankDriveVoltsRev(double leftVolts, double rightVolts) {
+        this.leftDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(-rightVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
+        this.rightDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(-leftVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
+    }
+
     public void limitedArcadeDrive(double fwd, double rot) {
-        this.leftDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd + rot) * 0.85, 3));
-        this.rightDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd - rot) * 0.85, 3));
+        this.leftDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd + rot) * 1.0, 3));
+        this.rightDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd - rot) * 1.0, 3));
     }
 
     public void arcadeDrive(double fwd, double rot) {
-        this.leftDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd + rot), 3) * 0.6);
-        this.rightDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd - rot), 3) * 0.6);
+        rot = rot * 0.6;
+        this.leftDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd + rot) * 0.8, 3));
+        this.rightDriveMaster.set(ControlMode.PercentOutput, Math.pow((fwd - rot) * 0.8, 3));
+    }
+
+    public void velocityArcadeDrive(double fwd, double rot) {
+        this.leftDriveMaster.set(ControlMode.Velocity, ((fwd + rot) * 0.8) * 500000);
+        this.rightDriveMaster.set(ControlMode.Velocity, ((fwd - rot) * 0.8) * 500000);
     }
 
     public void regArcadeDrive(double fwd, double rot) {
@@ -254,14 +306,25 @@ public class Drivetrain extends SubsystemBase {
     	navx.zeroYaw();
     }
 
+    public double getTargetHeading() {
+        return targetHeading;
+    }
+
+    public void setTargetHeading(double heading) {
+        this.targetHeading = heading;
+    }
+
     //? Trajectory
 
     public void setDriveStates(TrapezoidProfile.State left, TrapezoidProfile.State right) {
-        // this.tankDrive(leftDrivePID.setSetpoint(left.position), rightDrivePID.setSetpoint(right.position));
+        leftDrivePID.setSetpoint(left.position);
+        rightDrivePID.setSetpoint(right.position);
+        this.leftDriveMaster.set(ControlMode.Position, leftDrivePID.getSetpoint());
+        this.rightDriveMaster.set(ControlMode.Position, rightDrivePID.getSetpoint());
     }
 
     public Double getHeading() {
-        return Math.IEEEremainder(navx.getAngle(), 360);
+        return Math.IEEEremainder(-navx.getAngle(), 360);
     }
 
     public Pose2d getPose() {
@@ -299,6 +362,13 @@ public class Drivetrain extends SubsystemBase {
         );
     }
 
+    public DifferentialDriveWheelSpeeds getWheelSpeedsRev() {
+        return new DifferentialDriveWheelSpeeds(
+            getRightVelocityMetersPerSecond(), 
+            getLeftVelocityMetersPerSecond()
+        );
+    }
+
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
         odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
@@ -309,6 +379,22 @@ public class Drivetrain extends SubsystemBase {
         resetGyro();
     }
 
+    private void dashboard() {
+        ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+        tab.addNumber("Target-Distance", () -> this.getTargetDistance());
+        tab.addNumber("Distance", () -> this.getDistance());
+        tab.addNumber("Heading", () -> this.getHeading());
+        tab.addNumber("Left-Dist-Meters", () -> this.getLeftDistanceMeters());
+        tab.addNumber("Right-Dist-Meters", () -> this.getRightDistanceMeters());
+        tab.addNumber("Left-Ticks", () -> this.leftDriveMaster.getSelectedSensorPosition());
+        tab.addNumber("Right-Ticks", () -> this.rightDriveMaster.getSelectedSensorPosition());
+        tab.addNumber("Left-Drive-Master-Temp", () -> this.leftDriveMaster.getTemperature());
+        tab.addNumber("Left-Drive-Temp", () -> this.leftDrive.getTemperature());
+        tab.addNumber("Right-Drive-Master-Temp", () -> this.rightDriveMaster.getTemperature());
+        tab.addNumber("Right-Drive-Temp", () -> this.rightDrive.getTemperature());
+        tab.addNumber("Max-Temp", () -> Math.max(Math.max(this.leftDriveMaster.getTemperature(), this.leftDrive.getTemperature()), Math.max(this.rightDriveMaster.getTemperature(), this.rightDrive.getTemperature())));
+    }
+
     @Override
     public void periodic() {
         odometry.update(
@@ -316,6 +402,12 @@ public class Drivetrain extends SubsystemBase {
             getLeftDistanceMeters(), 
             getRightDistanceMeters()
         );
+
+        if(!(CommandScheduler.getInstance().isScheduled(RobotContainer.getDriveStraight()))) {
+            // System.out.println("Running");
+            this.targetHeading = getHeading();
+        }
+        // this.targetHeading = getHeading();
 
         this.x = table.getEntry("tx").getDouble(0.0);
         this.y = table.getEntry("ty").getDouble(0.0);
@@ -327,13 +419,8 @@ public class Drivetrain extends SubsystemBase {
         this.previousX = this.x;
         this.previousY = this.y;
 
-        SmartDashboard.putNumber("[Limelight]-Target-Distance", getTargetDistance());
-        SmartDashboard.putNumber("[Limelight]-Distance", getDistance());
+        SmartDashboard.putNumber("Heading", this.getHeading());
 
-        SmartDashboard.putNumber("[Drivetrain]-Heading", getHeading());
-        SmartDashboard.putNumber("[Drivetrain]-Left-Dist-Meters", getLeftDistanceMeters());
-        SmartDashboard.putNumber("[Drivetrain]-Right-Dist-Meters", getRightDistanceMeters());
-        SmartDashboard.putNumber("[Drivetrain]-Left-Ticks", this.leftDriveMaster.getSelectedSensorPosition());
-        SmartDashboard.putNumber("[Drivetrain]-Right-Ticks", this.rightDriveMaster.getSelectedSensorPosition());
+        // Shuffleboard.getTab("Drivetrain").addNumber("Max Temp", () -> Math.max(Math.max(this.leftDriveMaster.getTemperature(), this.leftDrive.getTemperature()), Math.max(this.rightDriveMaster.getTemperature(), this.rightDrive.getTemperature())));
     }
 }

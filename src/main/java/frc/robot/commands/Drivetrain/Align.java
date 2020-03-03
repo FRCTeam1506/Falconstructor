@@ -15,7 +15,29 @@ public class Align extends PIDCommand {
                 Constants.Drivetrain.HEADING_PID[2]
             ),
             drivetrain::getX,
-            0.0,
+            2.0,
+            output -> {
+                System.out.println(-output);
+                drivetrain.regArcadeDrive(0, -output);
+            },
+            drivetrain
+        );
+
+        getController().enableContinuousInput(-27.0, 27.0);
+        getController().setTolerance(
+            Constants.Drivetrain.TURN_TOLERANCE
+        );
+    }
+
+    public Align(Drivetrain drivetrain, Double targetXError) {
+        super(
+            new PIDController(
+                Constants.Drivetrain.HEADING_PID[0], 
+                Constants.Drivetrain.HEADING_PID[1], 
+                Constants.Drivetrain.HEADING_PID[2]
+            ),
+            drivetrain::getX,
+            targetXError,
             output -> {
                 System.out.println(-output);
                 drivetrain.regArcadeDrive(0, -output);
