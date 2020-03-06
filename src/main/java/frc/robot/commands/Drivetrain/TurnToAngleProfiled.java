@@ -21,7 +21,7 @@ public class TurnToAngleProfiled extends ProfiledPIDCommand {
             ),
             drivetrain::getHeading,
             targetAngleDegrees,
-            (output, setpoint) -> drivetrain.arcadeDrive(0, output),
+            (output, setpoint) -> drivetrain.arcadeDrive(0, -output),
             drivetrain
         );
 

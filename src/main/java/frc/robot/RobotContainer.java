@@ -30,6 +30,7 @@ import frc.robot.commands.Intake.IntakeDefault;
 import frc.robot.commands.Intake.IntakeIntake;
 import frc.robot.commands.Macros.IndexAndShoot;
 import frc.robot.commands.Macros.TestMaster;
+import frc.robot.commands.Macros.TurnToAngle2;
 import frc.robot.commands.Macros.Unjam;
 import frc.robot.commands.Macros.Tests.TestMechanisms;
 import frc.robot.commands.Shifter.DefaultSetToHighGear;
@@ -53,6 +54,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
@@ -115,8 +117,9 @@ public class RobotContainer {
     new JoystickButton(driver, Constants.Playstation.TriangleButton.getID()).whenPressed(new Align(drivetrain).withTimeout(3.0));
     new JoystickButton(driver, Constants.Playstation.XButton.getID()).whileHeld(new HorizIndex(horizIndexer));
     // new JoystickButton(driver, Constants.Playstation.CircleButton.getID()).whileHeld(new VertIndex(vertIndexer));
-    new JoystickButton(driver, Constants.Playstation.RightBumper.getID()).whileHeld(new SetToLowGear(shifter));
-    new JoystickButton(driver, Constants.Playstation.LeftBumper.getID()).whenHeld(d_driveStraight); 
+    new JoystickButton(driver, Constants.Playstation.LeftBumper.getID()).whileHeld(new SetToLowGear(shifter));
+    // new JoystickButton(driver, Constants.Playstation.LeftBumper.getID()).whenHeld(d_driveStraight);
+    new JoystickButton(driver, Constants.Playstation.RightBumper.getID()).whileHeld(m_extendAndIntake);
     new POVButton(driver, Constants.Playstation.EastPOVButton.getID()).whenPressed(new TurnToAngle(drivetrain, 90).withTimeout(5.0));
     new POVButton(driver, Constants.Playstation.WestPOVButton.getID()).whenPressed(new TurnToAngle(drivetrain, -90).withTimeout(5.0));
     new POVButton(driver, Constants.Playstation.SouthPOVButton.getID()).whenPressed(new TurnToAngle(drivetrain, 180).withTimeout(5.0));
@@ -143,15 +146,15 @@ public class RobotContainer {
 
     //? Test Controller Controls
     new JoystickButton(testinator, Constants.Playstation.BigButton.getID()).whileHeld(new TestMechanisms(intake, horizIndexer, vertIndexer, shooter));
-    new POVButton(testinator, Constants.Playstation.NorthPOVButton.getID()).whenPressed(new TurnToAngle(drivetrain, 180));
-    new POVButton(testinator, Constants.Playstation.EastPOVButton.getID()).whenPressed(new TurnToAngle(drivetrain, 90));
-    new POVButton(testinator, Constants.Playstation.WestPOVButton.getID()).whenPressed(new TurnToAngle(drivetrain, -180));
-    new POVButton(testinator, Constants.Playstation.SouthPOVButton.getID()).whenPressed(new TurnToAngle(drivetrain, -90));
+    // new POVButton(testinator, Constants.Playstation.NorthPOVButton.getID()).whenPressed(new TurnToAngle2(drivetrain, shifter, 45));
+    // new POVButton(testinator, Constants.Playstation.EastPOVButton.getID()).whenPressed(new TurnToAngle2(drivetrain, shifter, 90));
+    // new POVButton(testinator, Constants.Playstation.WestPOVButton.getID()).whenPressed(new TurnToAngle2(drivetrain, shifter, -180));
+    // new POVButton(testinator, Constants.Playstation.SouthPOVButton.getID()).whenPressed(new TurnToAngle2(drivetrain, shifter, -90));
 
-    // new POVButton(testinator, Constants.Playstation.NorthPOVButton.getID()).whenPressed(new TurnToAngleProfiled(drivetrain, 180));
-    // new POVButton(testinator, Constants.Playstation.EastPOVButton.getID()).whenPressed(new TurnToAngleProfiled(drivetrain, 90));
-    // new POVButton(testinator, Constants.Playstation.WestPOVButton.getID()).whenPressed(new TurnToAngleProfiled(drivetrain, -180));
-    // new POVButton(testinator, Constants.Playstation.SouthPOVButton.getID()).whenPressed(new TurnToAngleProfiled(drivetrain, -90));
+    new POVButton(testinator, Constants.Playstation.NorthPOVButton.getID()).whenPressed(new TurnToAngleProfiled(drivetrain, 180));
+    new POVButton(testinator, Constants.Playstation.EastPOVButton.getID()).whenPressed(new TurnToAngleProfiled(drivetrain, 90));
+    new POVButton(testinator, Constants.Playstation.WestPOVButton.getID()).whenPressed(new TurnToAngleProfiled(drivetrain, -180));
+    new POVButton(testinator, Constants.Playstation.SouthPOVButton.getID()).whenPressed(new TurnToAngleProfiled(drivetrain, -90));
   }
 
 
@@ -225,70 +228,103 @@ public class RobotContainer {
 
   }
 
-  // private void setupDashboard() {
-  //   //? Drivetrain
+  private void setupDashboard() {
+    //? Drivetrain
+    drivetrain.dashboard();
+    //? Intake
 
-  //   //? Intake
+    //? Horizontal Indexer
 
-  //   //? Horizontal Indexer
+    //? Vertical Indexer
 
-  //   //? Vertical Indexer
+    //? Shifter
 
-  //   //? Shifter
+    //? Climber
 
-  //   //? Climber
-  //   Shuffleboard.getTab("Climber").addNumber("Left Encoder", () -> climber.getLeftClimber().getSelectedSensorPosition());
-  //   Shuffleboard.getTab("Climber").addNumber("Right Encoder", () -> climber.getRightClimber().getSelectedSensorPosition());
-  // }
-
+  }
 
   public Command getAutonomousCommand() {
     //? Reset Sensors
-    drivetrain.resetEncoders();
-    drivetrain.resetGyro();
+    // drivetrain.resetEncoders();
+    // drivetrain.resetGyro();
+    String name = "work";
+    drivetrain.resetOdometry(TrajectoryLoader.loadTrajectoryFromFile(name).getInitialPose());
+    System.out.println(TrajectoryLoader.loadTrajectoryFromFile(name).getInitialPose());
 
-    /*
-    Trajectory trajectory = TrajectoryLoader.loadTrajectoryFromFile("Unnamed");
-    RamseteCommand ramseteCommand = new RamseteCommand(
-      trajectory,
-      drivetrain::getPose,
-      new RamseteController(2.0, 0.7), // 2.3
-      new SimpleMotorFeedforward(
-        Constants.Drivetrain.kS,
-        Constants.Drivetrain.kV,
-        Constants.Drivetrain.kA
-      ),
-      Constants.Drivetrain.kDriveKinematics,
-      drivetrain::getWheelSpeeds,
-      new PIDController(1.5, 0.01, 0.05),
-      new PIDController(1.1, 0.01, 0.15),
-      drivetrain::tankDriveVolts,
-      drivetrain
-    );
-    */
+    return standardRamseteCommand(name);
 
-    Position pos = positionChooser.getSelected();
-    Goal goal = goalChooser.getSelected();
-
-    if (pos == Position.Nothing) return new Nothing();
-    
-    else if (pos == Position.Left) { 
-      if (goal == Goal.Safe) return new LeftAuton(drivetrain, intake, horizIndexer, vertIndexer, shooter);
-      else if (goal == Goal.Ambitious) return test5Ball();
-    }
-
-    else if (pos == Position.Middle) return new MiddleAuton(drivetrain, intake, horizIndexer, vertIndexer, shooter); 
-
-    else if (pos == Position.Right) { 
-      if (goal == Goal.Safe) return new RightAuton(drivetrain, intake, horizIndexer, vertIndexer, shooter); 
-      else if (goal == Goal.Ambitious) return test6Ball();
-    }
-
-    else return new Nothing();
-
-    // return ramseteCommand.andThen(() -> drivetrain.tankDrive(0.0, 0.0));
-    return new InstantCommand(() -> drivetrain.tankDrive(0.0, 0.0));
+    // return new ParallelCommandGroup(
+    //   new DefaultSetToHighGear(shifter),
+    //   // test_fwd()
+    //   // standardRamseteCommand("fwd")
+    //   standardRamseteRevCommand("fwd")
+      // new RamseteCommand(
+      //   TrajectoryLoader.loadTrajectoryFromFile("u_curve_rev"),
+      //   drivetrain::getPose,
+      //   new RamseteController(),
+      //   new SimpleMotorFeedforward(
+      //     Constants.Drivetrain.kS,
+      //     Constants.Drivetrain.kV,
+      //     Constants.Drivetrain.kA
+      //   ),
+      //   Constants.Drivetrain.kDriveKinematics,
+      //   drivetrain::getWheelSpeedsRev,
+      //   new PIDController(1.1, 0.01, 0.15),
+      //   new PIDController(1.5, 0.01, 0.05),
+      //   drivetrain::tankDriveVoltsRev,
+      //   drivetrain
+      // )
+    // );
   }
+
+
+  // public Command getAutonomousCommand() {
+  //   //? Reset Sensors
+  //   drivetrain.resetEncoders();
+  //   drivetrain.resetGyro();
+
+  //   /*
+  //   Trajectory trajectory = TrajectoryLoader.loadTrajectoryFromFile("Unnamed");
+  //   RamseteCommand ramseteCommand = new RamseteCommand(
+  //     trajectory,
+  //     drivetrain::getPose,
+  //     new RamseteController(2.0, 0.7), // 2.3
+  //     new SimpleMotorFeedforward(
+  //       Constants.Drivetrain.kS,
+  //       Constants.Drivetrain.kV,
+  //       Constants.Drivetrain.kA
+  //     ),
+  //     Constants.Drivetrain.kDriveKinematics,
+  //     drivetrain::getWheelSpeeds,
+  //     new PIDController(1.5, 0.01, 0.05),
+  //     new PIDController(1.1, 0.01, 0.15),
+  //     drivetrain::tankDriveVolts,
+  //     drivetrain
+  //   );
+  //   */
+
+  //   Position pos = positionChooser.getSelected();
+  //   Goal goal = goalChooser.getSelected();
+
+  //   if (pos == Position.Nothing) return new Nothing();
+    
+  //   else if (pos == Position.Left) { 
+  //     if (goal == Goal.Safe) return new LeftAuton(drivetrain, intake, horizIndexer, vertIndexer, shooter);
+  //     else if (goal == Goal.Ambitious) return test5Ball();
+  //   }
+
+  //   else if (pos == Position.Middle) return new MiddleAuton(drivetrain, intake, horizIndexer, vertIndexer, shooter); 
+
+  //   else if (pos == Position.Right) { 
+  //     if (goal == Goal.Safe) return new RightAuton(drivetrain, intake, horizIndexer, vertIndexer, shooter); 
+  //     else if (goal == Goal.Ambitious) return test6Ball();
+  //   }
+
+  //   else return new Nothing();
+
+  //   // return ramseteCommand.andThen(() -> drivetrain.tankDrive(0.0, 0.0));
+  //   return new InstantCommand(() -> drivetrain.tankDrive(0.0, 0.0));
+  // }
 
   private Command test_fwd() {
     return new RamseteCommand(
@@ -402,6 +438,44 @@ public class RobotContainer {
         new IndexAndShoot(intake, horizIndexer, vertIndexer, shooter)
       )
     ).andThen(() -> drivetrain.tankDrive(0.0, 0.0));
+  }
+
+  private RamseteCommand standardRamseteCommand(String name) {
+    return new RamseteCommand(
+      TrajectoryLoader.loadTrajectoryFromFile(name),
+      drivetrain::getPose,
+      new RamseteController(2.0, 0.7), // 2.3
+      new SimpleMotorFeedforward(
+        Constants.Drivetrain.kS,
+        Constants.Drivetrain.kV,
+        Constants.Drivetrain.kA
+      ),
+      Constants.Drivetrain.kDriveKinematics,
+      drivetrain::getWheelSpeeds,
+      new PIDController(1.5, 0.01, 0.15),
+      new PIDController(1.55, 0.047, 0.15),
+      drivetrain::tankDriveVolts,
+      drivetrain
+    );
+  } 
+
+  private Command standardRamseteRevCommand(String name) {
+    return new RamseteCommand(
+      TrajectoryLoader.loadTrajectoryFromFile(name),
+      drivetrain::getPose,
+      new RamseteController(2.0, 0.7), // 2.3
+      new SimpleMotorFeedforward(
+        Constants.Drivetrain.kS,
+        Constants.Drivetrain.kV,
+        Constants.Drivetrain.kA
+      ),
+      Constants.Drivetrain.kDriveKinematics,
+      drivetrain::getWheelSpeedsRev,
+      new PIDController(1.5, 0.01, 0.15),
+      new PIDController(1.5, 0.01, 0.05),
+      drivetrain::tankDriveVoltsRev,
+      drivetrain
+    ).andThen(() -> drivetrain.arcadeDrive(0.0, 0.0));
   }
 
   public static Command getDriveStraight() {

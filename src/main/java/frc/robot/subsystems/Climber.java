@@ -10,12 +10,13 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
 
     private DoubleSolenoid arm = new DoubleSolenoid(2,3);
-    private TalonFX leftClimber = new TalonFX(3);
-    private TalonFX rightClimber = new TalonFX(12);
+    private TalonFX leftClimber = new TalonFX(Constants.Climber.LEFT_CLIMBER_ID.getID());
+    private TalonFX rightClimber = new TalonFX(Constants.Climber.RIGHT_CLIMBER_ID.getID());
 
     public Climber() {
         this.leftClimber.setInverted(true);
@@ -34,11 +35,11 @@ public class Climber extends SubsystemBase {
         this.rightClimber.config_kD(0, 0.0);
         this.rightClimber.config_kF(0, 0.2);
 
-        this.leftClimber.configMotionCruiseVelocity(100000);
-        this.leftClimber.configMotionAcceleration(30000);
+        this.leftClimber.configMotionCruiseVelocity(150000);
+        this.leftClimber.configMotionAcceleration(50000);
 
-        this.rightClimber.configMotionCruiseVelocity(100000);
-        this.rightClimber.configMotionAcceleration(30000);
+        this.rightClimber.configMotionCruiseVelocity(150000);
+        this.rightClimber.configMotionAcceleration(50000);
 
         DEFAULT();
         reset();
@@ -65,8 +66,8 @@ public class Climber extends SubsystemBase {
     }
 
     public void setClimbing() {
-        this.leftClimber.set(ControlMode.MotionMagic, -300000.0);
-        this.rightClimber.set(ControlMode.MotionMagic, -300000.0);
+        this.leftClimber.set(ControlMode.MotionMagic, -310000.0);
+        this.rightClimber.set(ControlMode.MotionMagic, -310000.0);
     }
 
     public void controlClimber(double leftPower, double rightPower) {

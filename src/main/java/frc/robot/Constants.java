@@ -43,11 +43,11 @@ public final class Constants {
         public static final NamedID RIGHT_DRIVE_MASTER_ID = new NamedID("Right-Drive-Master-ID", 14);
         public static final NamedID RIGHT_DRIVE_ID = new NamedID("Right-Drive-ID", 15);
 
-        public static final Double LEFT_TICKS_PER_REV = 193811.0 / Units.inchesToMeters(107.5); // 18600.0
-        public static final Double RIGHT_TICKS_PER_REV = 199179.0 / Units.inchesToMeters(113); // 9326 19500.0
+        public static final Double LEFT_TICKS_PER_REV = 79675.000000 / Units.inchesToMeters(75); // 18600.0
+        public static final Double RIGHT_TICKS_PER_REV = 84660.000000 / Units.inchesToMeters(81); // 9326 19500.0
 
-        public static final Double MAX_VELOCITY = 0.3048; // 1 ft
-        public static final Double MAX_ACCELERATION = 0.1;
+        public static final Double MAX_VELOCITY = 0.3048 * 5; // 1 ft
+        public static final Double MAX_ACCELERATION = 0.1 * 5;
         public static final Double MAX_VOLTS = 100.0;
 
         public static final Double kTrackwidthMeters = 0.635; // 4.211691140585359 0.635
@@ -113,6 +113,11 @@ public final class Constants {
 
     public static final class VertIndexer {
         public static final NamedID INDEXER_ID = new NamedID("Indexer-ID", 11);
+    }
+
+    public static final class Climber {
+        public static final NamedID LEFT_CLIMBER_ID = new NamedID("Left-Climber", 3);
+        public static final NamedID RIGHT_CLIMBER_ID = new NamedID("Right-Climber", 12);
     }
 
     public static final class Playstation {

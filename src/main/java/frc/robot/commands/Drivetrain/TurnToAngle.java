@@ -2,6 +2,7 @@ package frc.robot.commands.Drivetrain;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
+
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 
@@ -18,7 +19,7 @@ public class TurnToAngle extends PIDCommand {
             ),
             drivetrain::getHeading,
             targetAngleDegrees,
-            output -> drivetrain.arcadeDrive(0, output),
+            output -> drivetrain.arcadeDrive(0, -output),
             drivetrain
         );
 
@@ -30,7 +31,7 @@ public class TurnToAngle extends PIDCommand {
 
     @Override
     public void initialize() {
-        m_drivetrain.resetGyro();
+        // m_drivetrain.resetGyro();
     }
 
     @Override

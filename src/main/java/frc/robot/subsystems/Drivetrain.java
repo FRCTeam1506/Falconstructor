@@ -103,7 +103,32 @@ public class Drivetrain extends SubsystemBase {
         this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
         this.ramseteController = new RamseteController(2.0, 0.7);
 
-        dashboard();
+        this.y = 0.0;
+
+        Shuffleboard.getTab("Drivetrain").addNumber("Target-Distance", this::getTargetDistance);
+        Shuffleboard.getTab("Drivetrain").addNumber("Distance", this::getDistance);
+        Shuffleboard.getTab("Drivetrain").addNumber("Heading", this::getHeading);
+        Shuffleboard.getTab("Drivetrain").addNumber("Left-Dist-Meters", this::getLeftDistanceMeters);
+        Shuffleboard.getTab("Drivetrain").addNumber("Right-Dist-Meters", this::getRightDistanceMeters);
+        Shuffleboard.getTab("Drivetrain").addNumber("Left-Velocity", this::getLeftVelocityMetersPerSecond);
+        Shuffleboard.getTab("Drivetrain").addNumber("Right-Velocity", this::getRightVelocityMetersPerSecond);
+
+        Shuffleboard.getTab("Drivetrain").addNumber("Left-Ticks", () -> this.leftDriveMaster.getSelectedSensorPosition());
+        Shuffleboard.getTab("Drivetrain").addNumber("Right-Ticks", () -> this.rightDriveMaster.getSelectedSensorPosition());
+        Shuffleboard.getTab("Drivetrain").addNumber("Left-Drive-Master-Temp", () -> this.leftDriveMaster.getTemperature());
+        Shuffleboard.getTab("Drivetrain").addNumber("Left-Drive-Temp", () -> this.leftDrive.getTemperature());
+        Shuffleboard.getTab("Drivetrain").addNumber("Right-Drive-Master-Temp", () -> this.rightDriveMaster.getTemperature());
+        Shuffleboard.getTab("Drivetrain").addNumber("Right-Drive-Temp", () -> this.rightDrive.getTemperature());
+        Shuffleboard.getTab("Drivetrain").addNumber("Max-Temp", () -> Math.max(Math.max(this.leftDriveMaster.getTemperature(), this.leftDrive.getTemperature()), Math.max(this.rightDriveMaster.getTemperature(), this.rightDrive.getTemperature())));
+
+        Shuffleboard.getTab("Drivetrain").addNumber("X Coord", this::getXCoordinate);
+        Shuffleboard.getTab("Drivetrain").addNumber("Y Coord", this::getYCoordinate);
+
+        Shuffleboard.getTab("Limelight").addNumber("X Error", this::getX);
+        Shuffleboard.getTab("Limelight").addNumber("Y Error", this::getY);
+        Shuffleboard.getTab("Limelight").addNumber("Area", this::getArea);
+
+        // dashboard();
 
         // Shuffleboard.getTab("Drivetrain").addNumber("Target-Distance", () -> getTargetDistance());
         // Shuffleboard.getTab("Drivetrain").addNumber("Distance", () -> getDistance());
@@ -150,13 +175,13 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void tankDriveVolts(double leftVolts, double rightVolts) {
-        this.leftDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(-leftVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
-        this.rightDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(-rightVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
+        this.leftDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(leftVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
+        this.rightDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(rightVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
     }
 
     public void tankDriveVoltsRev(double leftVolts, double rightVolts) {
-        this.leftDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(-rightVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
-        this.rightDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(-leftVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
+        this.leftDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(-leftVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
+        this.rightDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(-rightVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
     }
 
     public void limitedArcadeDrive(double fwd, double rot) {
@@ -240,15 +265,27 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Double getX() {
-        return this.x;
+        if(this.x != null) {
+            return this.x;
+        } else {
+            return 0.0;
+        }
     }
 
     public Double getY() {
-        return this.y;
+        if(this.y != null) {
+            return this.y;
+        } else {
+            return 0.0;
+        }
     }
 
     public Double getArea() {
-        return this.area;
+        if(this.area != null) {
+            return this.area;
+        } else {
+            return 0.0;
+        }
     }
 
     public int getPipeline() {
@@ -335,6 +372,14 @@ public class Drivetrain extends SubsystemBase {
         return navx.getRate();
     }
 
+    public double getXCoordinate() {
+        return this.odometry.getPoseMeters().getTranslation().getX();
+    }
+
+    public double getYCoordinate() {
+        return this.odometry.getPoseMeters().getTranslation().getY();
+    }
+
     public double getLeftDistanceMeters() {
         return leftDriveMaster.getSelectedSensorPosition() / Constants.Drivetrain.LEFT_TICKS_PER_REV;
     }
@@ -344,11 +389,13 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getLeftVelocityMetersPerSecond() {
-        return leftDriveMaster.getSelectedSensorVelocity() * (10.0 / Constants.Drivetrain.LEFT_TICKS_PER_REV);
+        // return leftDriveMaster.getSelectedSensorVelocity() * (10.0 / Constants.Drivetrain.LEFT_TICKS_PER_REV);
+        return leftDriveMaster.getSelectedSensorVelocity() / Constants.Drivetrain.LEFT_TICKS_PER_REV;
     }
 
     public double getRightVelocityMetersPerSecond() {
-        return rightDriveMaster.getSelectedSensorVelocity() * (10.0 / Constants.Drivetrain.RIGHT_TICKS_PER_REV);
+        // return rightDriveMaster.getSelectedSensorVelocity() * (10.0 / Constants.Drivetrain.RIGHT_TICKS_PER_REV);
+        return rightDriveMaster.getSelectedSensorVelocity() / Constants.Drivetrain.RIGHT_TICKS_PER_REV;
     }
 
     public double getAverageEncoderDistanceMeters() {
@@ -364,8 +411,8 @@ public class Drivetrain extends SubsystemBase {
 
     public DifferentialDriveWheelSpeeds getWheelSpeedsRev() {
         return new DifferentialDriveWheelSpeeds(
-            getRightVelocityMetersPerSecond(), 
-            getLeftVelocityMetersPerSecond()
+            -getLeftVelocityMetersPerSecond(), 
+            -getRightVelocityMetersPerSecond()
         );
     }
 
@@ -379,13 +426,13 @@ public class Drivetrain extends SubsystemBase {
         resetGyro();
     }
 
-    private void dashboard() {
+    public void dashboard() {
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-        tab.addNumber("Target-Distance", () -> this.getTargetDistance());
-        tab.addNumber("Distance", () -> this.getDistance());
-        tab.addNumber("Heading", () -> this.getHeading());
-        tab.addNumber("Left-Dist-Meters", () -> this.getLeftDistanceMeters());
-        tab.addNumber("Right-Dist-Meters", () -> this.getRightDistanceMeters());
+        tab.addNumber("Target-Distance", this::getTargetDistance);
+        tab.addNumber("Distance", this::getDistance);
+        tab.addNumber("Heading", this::getHeading);
+        tab.addNumber("Left-Dist-Meters", this::getLeftDistanceMeters);
+        tab.addNumber("Right-Dist-Meters", this::getRightDistanceMeters);
         tab.addNumber("Left-Ticks", () -> this.leftDriveMaster.getSelectedSensorPosition());
         tab.addNumber("Right-Ticks", () -> this.rightDriveMaster.getSelectedSensorPosition());
         tab.addNumber("Left-Drive-Master-Temp", () -> this.leftDriveMaster.getTemperature());
@@ -393,6 +440,11 @@ public class Drivetrain extends SubsystemBase {
         tab.addNumber("Right-Drive-Master-Temp", () -> this.rightDriveMaster.getTemperature());
         tab.addNumber("Right-Drive-Temp", () -> this.rightDrive.getTemperature());
         tab.addNumber("Max-Temp", () -> Math.max(Math.max(this.leftDriveMaster.getTemperature(), this.leftDrive.getTemperature()), Math.max(this.rightDriveMaster.getTemperature(), this.rightDrive.getTemperature())));
+
+        ShuffleboardTab tab2 = Shuffleboard.getTab("Limelight");
+        tab2.addNumber("X Error", this::getX);
+        tab2.addNumber("Y Error", this::getY);
+        tab2.addNumber("Area", this::getArea);
     }
 
     @Override
@@ -418,6 +470,8 @@ public class Drivetrain extends SubsystemBase {
         this.isRefreshed = this.x != previousX || this.y != previousY ? true : false;
         this.previousX = this.x;
         this.previousY = this.y;
+        
+        // this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
 
         SmartDashboard.putNumber("Heading", this.getHeading());
 
