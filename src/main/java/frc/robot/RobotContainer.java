@@ -17,6 +17,8 @@ import frc.robot.commands.Drivetrain.ArcadeDrive;
 import frc.robot.commands.Drivetrain.DriveBackward;
 import frc.robot.commands.Drivetrain.DriveForward;
 import frc.robot.commands.Drivetrain.DriveStraight;
+import frc.robot.commands.Drivetrain.FastTurnToAngleProfiled;
+import frc.robot.commands.Drivetrain.TankDrive;
 import frc.robot.commands.Drivetrain.TurnToAngle;
 import frc.robot.commands.Drivetrain.TurnToAngleProfiled;
 import frc.robot.commands.HorizIndexer.HorizIndex;
@@ -28,6 +30,7 @@ import frc.robot.commands.Intake.ExtendAndIntake;
 import frc.robot.commands.Intake.ExtendAndOutake;
 import frc.robot.commands.Intake.IntakeDefault;
 import frc.robot.commands.Intake.IntakeIntake;
+import frc.robot.commands.Intake.StopIntakeIntake;
 import frc.robot.commands.Macros.IndexAndShoot;
 import frc.robot.commands.Macros.TestMaster;
 import frc.robot.commands.Macros.TurnToAngle2;
@@ -49,6 +52,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shifter;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.VertIndexer;
+import frc.robot.subsystems.Drivetrain.Piplelines;
 import frc.robot.utils.TrajectoryLoader;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -63,6 +67,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 
@@ -95,6 +100,8 @@ public class RobotContainer {
   private final Command m_extendAndOutake = new ExtendAndOutake(intake);
   private static final Command d_driveStraight = new DriveStraight(drivetrain);
 
+  private Trajectory Six_Ball_1, Six_Ball_2;
+
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
@@ -108,7 +115,8 @@ public class RobotContainer {
     //? Setup Auton Chooser
     setupAutonChooser();
 
-    // setupDashboard();
+    //? Create Trajectories
+    createTrajectories();
   }
 
   private void configureButtonBindings() {
@@ -151,10 +159,10 @@ public class RobotContainer {
     // new POVButton(testinator, Constants.Playstation.WestPOVButton.getID()).whenPressed(new TurnToAngle2(drivetrain, shifter, -180));
     // new POVButton(testinator, Constants.Playstation.SouthPOVButton.getID()).whenPressed(new TurnToAngle2(drivetrain, shifter, -90));
 
-    new POVButton(testinator, Constants.Playstation.NorthPOVButton.getID()).whenPressed(new TurnToAngleProfiled(drivetrain, 180));
-    new POVButton(testinator, Constants.Playstation.EastPOVButton.getID()).whenPressed(new TurnToAngleProfiled(drivetrain, 90));
-    new POVButton(testinator, Constants.Playstation.WestPOVButton.getID()).whenPressed(new TurnToAngleProfiled(drivetrain, -180));
-    new POVButton(testinator, Constants.Playstation.SouthPOVButton.getID()).whenPressed(new TurnToAngleProfiled(drivetrain, -90));
+    new POVButton(testinator, Constants.Playstation.NorthPOVButton.getID()).whenPressed(new FastTurnToAngleProfiled(drivetrain, 180));
+    new POVButton(testinator, Constants.Playstation.EastPOVButton.getID()).whenPressed(new FastTurnToAngleProfiled(drivetrain, 90));
+    new POVButton(testinator, Constants.Playstation.WestPOVButton.getID()).whenPressed(new FastTurnToAngleProfiled(drivetrain, -180));
+    new POVButton(testinator, Constants.Playstation.SouthPOVButton.getID()).whenPressed(new FastTurnToAngleProfiled(drivetrain, -90));
   }
 
 
@@ -228,19 +236,9 @@ public class RobotContainer {
 
   }
 
-  private void setupDashboard() {
-    //? Drivetrain
-    drivetrain.dashboard();
-    //? Intake
-
-    //? Horizontal Indexer
-
-    //? Vertical Indexer
-
-    //? Shifter
-
-    //? Climber
-
+  private void createTrajectories() {
+    this.Six_Ball_1 = TrajectoryLoader.loadTrajectoryFromFile("1_u-turn");
+    this.Six_Ball_2 = TrajectoryLoader.loadTrajectoryFromFile("2_to-front-trench");
   }
 
   public Command getAutonomousCommand() {
@@ -248,10 +246,18 @@ public class RobotContainer {
     // drivetrain.resetEncoders();
     // drivetrain.resetGyro();
     String name = "work";
-    drivetrain.resetOdometry(TrajectoryLoader.loadTrajectoryFromFile(name).getInitialPose());
-    System.out.println(TrajectoryLoader.loadTrajectoryFromFile(name).getInitialPose());
+    // drivetrain.resetOdometry(TrajectoryLoader.loadTrajectoryFromFile(name).getInitialPose());
+    // System.out.println(TrajectoryLoader.loadTrajectoryFromFile(name).getInitialPose());
 
-    return standardRamseteCommand(name);
+    // //? Reversed trajectories
+    // drivetrain.resetOdometry(TrajectoryLoader.createReverseTrajectory(name).getInitialPose());
+    // System.out.println(TrajectoryLoader.createReverseTrajectory(name).getInitialPose());
+    // Trajectory trajectory = TrajectoryLoader.createReverseTrajectory(name);
+    // drivetrain.resetOdometry(TrajectoryLoader.getInitialPoseReversed(trajectory));
+    // System.out.println(TrajectoryLoader.getInitialPoseReversed(trajectory));
+
+    // return standardRamseteRevCommand(name);
+    return test6Ball2();
 
     // return new ParallelCommandGroup(
     //   new DefaultSetToHighGear(shifter),
@@ -365,8 +371,7 @@ public class RobotContainer {
   }
 
   public Command test5Ball() {
-    return new DriveBackward(drivetrain, 0.5).withTimeout(1.85).andThen(
-      new ParallelCommandGroup(
+    return new ParallelCommandGroup(
         new Align(drivetrain).withTimeout(3.0),
         new IndexAndShoot(intake, horizIndexer, vertIndexer, shooter)
       ).andThen(
@@ -413,32 +418,153 @@ public class RobotContainer {
           new Align(drivetrain).withTimeout(3.0),
           new IndexAndShoot(intake, horizIndexer, vertIndexer, shooter)
         )
-      ).andThen(() -> drivetrain.tankDrive(0.0, 0.0))
+      ).andThen(() -> drivetrain.tankDrive(0.0, 0.0)
     );
   }
 
-  public Command test6Ball() {
-    return new ParallelCommandGroup(
-      new Align(drivetrain).withTimeout(3.0),
-      new IndexAndShoot(intake, horizIndexer, vertIndexer, shooter)
-    ).andThen(
-      new TurnToAngleProfiled(drivetrain, 180.0)
-    ).andThen(
-      new ParallelCommandGroup(
-        new IntakeIntake(intake),
-        new DriveForward(drivetrain, 0.5).withTimeout(2.5)
-      ).withTimeout(2.6)
-    ).andThen(
-      new DriveBackward(drivetrain, 0.5).withTimeout(2.2)
-    ).andThen(
-      new TurnToAngleProfiled(drivetrain, 180.0)
-    ).andThen(
-      new ParallelCommandGroup(
-        new Align(drivetrain).withTimeout(3.0),
-        new IndexAndShoot(intake, horizIndexer, vertIndexer, shooter)
+  public Command test6Ball2() {                              // 0.67
+    return new TankDrive(drivetrain, -0.87, -0.87).withTimeout(0.58).andThen(new Shoot(shooter, 24000.0).withTimeout(0.01)
+      ).andThen(() -> drivetrain.setPipeline(0)
+      ).andThen(
+      new SequentialCommandGroup(
+        new Align(drivetrain, 1.0).withTimeout(2.0),
+        new IndexAndShoot(intake, horizIndexer, vertIndexer, shooter, 0.5).withTimeout(3.0)
+      ).andThen(
+        new ParallelCommandGroup(
+          new StopHorizIndexer(horizIndexer),
+          new StopVertIndexer(vertIndexer),
+          new StopShooter(shooter),
+          new StopIntakeIntake(intake)
+        ).withTimeout(0.01)
+      ).andThen(
+        () -> drivetrain.resetOdometry(this.Six_Ball_1.getInitialPose())
+      ).andThen(
+        new ParallelCommandGroup(
+          new ExtendAndIntake(intake).withTimeout(5.0),
+          standardRamseteCommand(this.Six_Ball_1)
+        ).withTimeout(7.0)
+      ).andThen(new frc.robot.commands.Intake.Retract(intake).withTimeout(0.01)
+      ).andThen(new Shoot(shooter, 24000.0).withTimeout(0.87)
+      ).andThen(
+        new TankDrive(drivetrain, -0.6, -0.6).withTimeout(0.56) // 0.66
+      ).andThen(
+        new TankDrive(drivetrain, 0.5, -0.5).withTimeout(0.68) // 0.675
+      ).andThen(
+        new TankDrive(drivetrain, 0.0, 0.0).withTimeout(0.01)
+      ).andThen(() -> drivetrain.setPipeline(1)
+      ).andThen(
+        new SequentialCommandGroup(
+          new Align(drivetrain, 1.0).withTimeout(2.0),
+          new IndexAndShoot(intake, horizIndexer, vertIndexer, shooter, 0.5).withTimeout(3.0)
+        )
       )
+    // ).andThen(
+    //   new TurnToAngleProfiled(drivetrain, 180.0)
+    // ).andThen(
+    //   new ParallelCommandGroup(
+    //     new IntakeIntake(intake),
+    //     new DriveForward(drivetrain, 0.5).withTimeout(2.5)
+    //   ).withTimeout(2.6)
+    // ).andThen(
+    //   new DriveBackward(drivetrain, 0.5).withTimeout(2.2)
+    // ).andThen(
+    //   new TurnToAngleProfiled(drivetrain, 180.0)
+    // ).andThen(
+    //   new ParallelCommandGroup(
+    //     new Align(drivetrain).withTimeout(3.0),
+    //     new IndexAndShoot(intake, horizIndexer, vertIndexer, shooter)
+    //   )
     ).andThen(() -> drivetrain.tankDrive(0.0, 0.0));
   }
+
+  public Command test6Ball() {
+    return new TankDrive(drivetrain, -0.5, -0.5).withTimeout(1.0).andThen(
+      new ParallelCommandGroup(
+        new Align(drivetrain, 1.0).withTimeout(3.0),
+        new IndexAndShoot(intake, horizIndexer, vertIndexer, shooter, 2.0)
+      ).withTimeout(5.5)
+      .andThen(
+        new ParallelCommandGroup(
+          new StopHorizIndexer(horizIndexer),
+          new StopVertIndexer(vertIndexer),
+          new StopShooter(shooter),
+          new StopIntakeIntake(intake)
+        ).withTimeout(0.01)
+      ).andThen(
+        () -> drivetrain.resetOdometry(this.Six_Ball_1.getInitialPose())
+      ).andThen(
+        new ParallelCommandGroup(
+          new ExtendAndIntake(intake).withTimeout(5.0),
+          standardRamseteCommand(this.Six_Ball_1)
+        ).withTimeout(7.0)
+      ).andThen(new frc.robot.commands.Intake.Retract(intake).withTimeout(0.01)
+      ).andThen(
+          new TurnToAngleProfiled(drivetrain, -180)
+      ).andThen(
+        () -> drivetrain.resetOdometry(this.Six_Ball_2.getInitialPose()))
+      ).andThen(
+        fastRamseteCommand(this.Six_Ball_2)
+      ).andThen(
+        new ParallelCommandGroup(
+          new Align(drivetrain, 1.0).withTimeout(3.0),
+          new IndexAndShoot(intake, horizIndexer, vertIndexer, shooter, 2.0)
+        ).withTimeout(5.5)
+    // ).andThen(
+    //   new TurnToAngleProfiled(drivetrain, 180.0)
+    // ).andThen(
+    //   new ParallelCommandGroup(
+    //     new IntakeIntake(intake),
+    //     new DriveForward(drivetrain, 0.5).withTimeout(2.5)
+    //   ).withTimeout(2.6)
+    // ).andThen(
+    //   new DriveBackward(drivetrain, 0.5).withTimeout(2.2)
+    // ).andThen(
+    //   new TurnToAngleProfiled(drivetrain, 180.0)
+    // ).andThen(
+    //   new ParallelCommandGroup(
+    //     new Align(drivetrain).withTimeout(3.0),
+    //     new IndexAndShoot(intake, horizIndexer, vertIndexer, shooter)
+    //   )
+    ).andThen(() -> drivetrain.tankDrive(0.0, 0.0));
+  }
+
+  private RamseteCommand standardRamseteCommand(Trajectory trajectory) {
+    return new RamseteCommand(
+      trajectory,
+      drivetrain::getPose,
+      new RamseteController(2.0, 0.7), // 2.3
+      new SimpleMotorFeedforward(
+        Constants.Drivetrain.kS,
+        Constants.Drivetrain.kV,
+        Constants.Drivetrain.kA
+      ),
+      Constants.Drivetrain.kDriveKinematics,
+      drivetrain::getWheelSpeeds,
+      new PIDController(1.5, 0.01, 0.15),
+      new PIDController(1.55, 0.047, 0.15),
+      drivetrain::tankDriveVolts,
+      drivetrain
+    );
+  }
+
+  private RamseteCommand fastRamseteCommand(Trajectory trajectory) {
+    return new RamseteCommand(
+      trajectory,
+      drivetrain::getPose,
+      new RamseteController(2.0, 0.7), // 2.3
+      new SimpleMotorFeedforward(
+        Constants.Drivetrain.kS,
+        Constants.Drivetrain.kV,
+        Constants.Drivetrain.kA
+      ),
+      Constants.Drivetrain.kDriveKinematics,
+      drivetrain::getWheelSpeeds,
+      new PIDController(3.0, 0.01, 0.15),
+      new PIDController(3.0, 0.047, 0.15),
+      drivetrain::fastTankDriveVolts,
+      drivetrain
+    );
+  } 
 
   private RamseteCommand standardRamseteCommand(String name) {
     return new RamseteCommand(
@@ -461,7 +587,7 @@ public class RobotContainer {
 
   private Command standardRamseteRevCommand(String name) {
     return new RamseteCommand(
-      TrajectoryLoader.loadTrajectoryFromFile(name),
+      TrajectoryLoader.createReverseTrajectory(name),
       drivetrain::getPose,
       new RamseteController(2.0, 0.7), // 2.3
       new SimpleMotorFeedforward(
@@ -470,10 +596,10 @@ public class RobotContainer {
         Constants.Drivetrain.kA
       ),
       Constants.Drivetrain.kDriveKinematics,
-      drivetrain::getWheelSpeedsRev,
+      drivetrain::getWheelSpeeds,
       new PIDController(1.5, 0.01, 0.15),
-      new PIDController(1.5, 0.01, 0.05),
-      drivetrain::tankDriveVoltsRev,
+      new PIDController(1.55, 0.047, 0.15),
+      drivetrain::tankDriveVolts,
       drivetrain
     ).andThen(() -> drivetrain.arcadeDrive(0.0, 0.0));
   }

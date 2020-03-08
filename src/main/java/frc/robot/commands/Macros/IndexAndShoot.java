@@ -14,7 +14,6 @@ import frc.robot.subsystems.VertIndexer;
 public class IndexAndShoot extends ParallelCommandGroup {
 
     public IndexAndShoot(Intake intake, HorizIndexer horizIndexer, VertIndexer vertIndexer, Shooter shooter) {
-
         super(
             new Shoot(shooter, 24000.0),
             new SequentialCommandGroup(
@@ -23,7 +22,17 @@ public class IndexAndShoot extends ParallelCommandGroup {
                 new Index(horizIndexer, vertIndexer, intake)
             )
         );
+    }
 
+    public IndexAndShoot(Intake intake, HorizIndexer horizIndexer, VertIndexer vertIndexer, Shooter shooter, Double waitTimeSeconds) {
+        super(
+            new Shoot(shooter, 24000.0),
+            new SequentialCommandGroup(
+                // new HorizIndexRevCycle(horizIndexer),
+                new WaitCommand(waitTimeSeconds),
+                new Index(horizIndexer, vertIndexer, intake)
+            )
+        );
     }
 
 }

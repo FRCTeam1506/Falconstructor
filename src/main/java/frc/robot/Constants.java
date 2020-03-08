@@ -46,8 +46,8 @@ public final class Constants {
         public static final Double LEFT_TICKS_PER_REV = 79675.000000 / Units.inchesToMeters(75); // 18600.0
         public static final Double RIGHT_TICKS_PER_REV = 84660.000000 / Units.inchesToMeters(81); // 9326 19500.0
 
-        public static final Double MAX_VELOCITY = 0.3048 * 5; // 1 ft
-        public static final Double MAX_ACCELERATION = 0.1 * 5;
+        public static final Double MAX_VELOCITY = 3.6; // 1 ft 0.3048 * 5
+        public static final Double MAX_ACCELERATION = 0.777; // 0.1 * 5
         public static final Double MAX_VOLTS = 100.0;
 
         public static final Double kTrackwidthMeters = 0.635; // 4.211691140585359 0.635
@@ -71,6 +71,7 @@ public final class Constants {
         public static final TrajectoryConfig config = new TrajectoryConfig(MAX_VELOCITY, MAX_ACCELERATION).setKinematics(kDriveKinematics).addConstraint(autoVoltageConstraint);
     
         public static final double[] HEADING_PID = {0.014, 0.011, 0.0023}; // 0.014 0.011 0.0023 0.014 0.013 0.0033
+        public static final double[] FAST_HEADING_PID = {0.2, 0.008, 0.1};
 
         public static final double TURN_TOLERANCE = 0.2; // 0.01
         public static final double TURN_RATE_TOLERANCE = 10.0;

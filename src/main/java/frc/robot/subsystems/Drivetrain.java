@@ -179,6 +179,11 @@ public class Drivetrain extends SubsystemBase {
         this.rightDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(rightVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
     }
 
+    public void fastTankDriveVolts(double leftVolts, double rightVolts) {
+        this.leftDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(leftVolts/12.0 * 1.7, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
+        this.rightDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(rightVolts/12.0 * 1.7, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
+    }
+
     public void tankDriveVoltsRev(double leftVolts, double rightVolts) {
         this.leftDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(-leftVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));
         this.rightDriveMaster.set(ControlMode.PercentOutput, MathUtil.clamp(-rightVolts/12.0, -Constants.Drivetrain.MAX_VOLTS, Constants.Drivetrain.MAX_VOLTS));

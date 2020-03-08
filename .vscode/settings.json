@@ -12,5 +12,7 @@
     "**/.settings": true,
     "**/.factorypath": true,
     "**/*~": true
-  }
+  },
+  "editor.maxTokenizationLineLength": 200000,
+  "python.pythonPath": "C:\\Users\\sarab\\AppData\\Local\\Programs\\Python\\Python37\\python.exe"
 }
