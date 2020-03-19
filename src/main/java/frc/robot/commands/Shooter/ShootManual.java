@@ -1,20 +1,16 @@
 package frc.robot.commands.Shooter;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
-public class Shoot extends CommandBase {
+public class ShootManual extends CommandBase {
 
     private final Shooter m_shooter;
-    private final Double m_velocity;
+    private final DoubleSupplier m_velocity;
 
-    public Shoot(Shooter shooter) {
-        m_shooter = shooter;
-        m_velocity = 20000.0;
-        addRequirements(m_shooter);
-    }
-
-    public Shoot(Shooter shooter, Double velocity) {
+    public ShootManual(Shooter shooter, DoubleSupplier velocity) {
         m_shooter = shooter;
         m_velocity = velocity;
         addRequirements(m_shooter);
@@ -22,7 +18,7 @@ public class Shoot extends CommandBase {
 
     @Override
     public void execute() {
-        m_shooter.shootVelocity(m_velocity);
+        m_shooter.shoot(m_velocity.getAsDouble());
     }
 
 }

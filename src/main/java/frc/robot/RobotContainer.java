@@ -41,6 +41,7 @@ import frc.robot.commands.Shifter.DefaultSetToLowGear;
 import frc.robot.commands.Shifter.SetToHighGear;
 import frc.robot.commands.Shifter.SetToLowGear;
 import frc.robot.commands.Shooter.Shoot;
+import frc.robot.commands.Shooter.ShootManual;
 import frc.robot.commands.Shooter.StopShooter;
 import frc.robot.commands.VertIndexer.StopVertIndexer;
 import frc.robot.commands.VertIndexer.VertIndex;
@@ -197,6 +198,13 @@ public class RobotContainer {
     shooter.setDefaultCommand(
       new StopShooter(shooter)
     );
+
+    // shooter.setDefaultCommand(
+    //   new ShootManual(
+    //     shooter, 
+    //     () -> driver.getRawAxis(Constants.Playstation.RightTrigger.getID())
+    //   )
+    // );
 
     intake.setDefaultCommand(
       new IntakeDefault(intake)
@@ -423,7 +431,7 @@ public class RobotContainer {
   }
 
   public Command test6Ball2() {                              // 0.67
-    return new TankDrive(drivetrain, -0.87, -0.87).withTimeout(0.58).andThen(new Shoot(shooter, 24000.0).withTimeout(0.01)
+    return new TankDrive(drivetrain, -0.87, -0.87).withTimeout(0.58).andThen(new Shoot(shooter, 20000.0).withTimeout(0.01)
       ).andThen(() -> drivetrain.setPipeline(0)
       ).andThen(
       new SequentialCommandGroup(
@@ -444,7 +452,7 @@ public class RobotContainer {
           standardRamseteCommand(this.Six_Ball_1)
         ).withTimeout(7.0)
       ).andThen(new frc.robot.commands.Intake.Retract(intake).withTimeout(0.01)
-      ).andThen(new Shoot(shooter, 24000.0).withTimeout(0.87)
+      ).andThen(new Shoot(shooter, 20000.0).withTimeout(0.87)
       ).andThen(
         new TankDrive(drivetrain, -0.6, -0.6).withTimeout(0.56) // 0.66
       ).andThen(

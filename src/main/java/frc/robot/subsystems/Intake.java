@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void intakeRev() {
-        this.intake.set(ControlMode.PercentOutput, -0.77);
+        this.intake.set(ControlMode.PercentOutput, -0.33);
     }
 
     public void intakeRev(double pwr) {
