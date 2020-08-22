@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
@@ -23,6 +22,7 @@ public class Shooter extends SubsystemBase {
     private NetworkTableEntry voltageWidget, velocityWidget;
 
     public Shooter() {
+        
         this.velocity = 0.0;
 
         this.shooter1.configFactoryDefault();
