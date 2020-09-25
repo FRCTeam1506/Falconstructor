@@ -45,24 +45,6 @@ public class Drivetrain extends SubsystemBase {
     private NetworkTableEntry leftDriveMasterVoltageWidget, leftDriveVoltageWidget, rightDriveMasterVoltageWidget, rightDriveVoltageWidget,
         leftDriveMasterTempWidget, leftDriveTempWidget, rightDriveMasterTempWidget, rightDriveTempWidget;
 
-    //? Limelight
-    private boolean aligned, isRefreshed, targetFound;
-    private Double x, y, area, targetDistance, previousX, previousY, previousDist;
-    private Integer pipeline;
-
-    private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-
-    private PIDController leftDrivePID, rightDrivePID;
-
-    public enum Piplelines {
-        NearTargeting,
-        FarTargeting,
-        Red,
-        Green,
-        Blue,
-        Yellow
-    }
-
     //? Gyro
     private final AHRS navx = new AHRS(SPI.Port.kMXP);
 
@@ -100,15 +82,11 @@ public class Drivetrain extends SubsystemBase {
         this.leftDrive.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
         this.rightDrive.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
 
-        this.targetDistance = 5000.0;
-
         resetEncoders();
 
         this.feedforward = new SimpleMotorFeedforward(Constants.Drivetrain.kS, Constants.Drivetrain.kV, Constants.Drivetrain.kA);
         this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
         this.ramseteController = new RamseteController(2.0, 0.7);
-
-        this.y = 0.0;
 
         // Shuffleboard.getTab("Drivetrain").addNumber("Target-Distance", this::getTargetDistance);
         // Shuffleboard.getTab("Drivetrain").addNumber("Distance", this::getDistance);
@@ -154,15 +132,15 @@ public class Drivetrain extends SubsystemBase {
     }
 
     //? Drive
-    // public void setLeftPwr(double pwr) {
-    //     this.leftDriveMaster.set(ControlMode.PercentOutput, pwr);
-    //     this.leftDrive.set(ControlMode.PercentOutput, pwr);
-    // }
+    public void setLeftPwr(double pwr) {
+        this.leftDriveMaster.set(ControlMode.PercentOutput, pwr);
+        this.leftDrive.set(ControlMode.PercentOutput, pwr);
+    }
 
-    // public void setRightPwr(double pwr) {
-    //     this.rightDriveMaster.set(ControlMode.PercentOutput, pwr);
-    //     this.rightDrive.set(ControlMode.PercentOutput, pwr);
-    // }
+    public void setRightPwr(double pwr) {
+        this.rightDriveMaster.set(ControlMode.PercentOutput, pwr);
+        this.rightDrive.set(ControlMode.PercentOutput, pwr);
+    }
 
     public void fwd(double pwr) {
         this.leftDriveMaster.set(ControlMode.PercentOutput, pwr);
@@ -232,121 +210,6 @@ public class Drivetrain extends SubsystemBase {
         this.rightDriveMaster.setSelectedSensorPosition(0, 0, 0);
     }
 
-    //? Limelight
-    public void setPipeline(int index) {
-        this.table.getEntry("pipeline").setNumber(index);
-    }
-
-    public void setPipeline(Piplelines pipe) {
-        switch (pipe) {
-            case NearTargeting:
-                this.setPipeline(5);
-                break;
-
-            case FarTargeting:
-                this.setPipeline(6);
-                break;
-
-            case Red:
-                this.setPipeline(0);
-                break;
-
-            case Green:
-                this.setPipeline(1);
-                break;
-
-            case Blue:
-                this.setPipeline(2);
-                break;
-
-            case Yellow:
-                this.setPipeline(3);
-                break;
-        
-            default:
-                this.setPipeline(5);
-                break;
-        }
-    }
-
-    public void setTargetDistance(Double distance) {
-        this.targetDistance = distance;
-    }
-
-    public Double getX() {
-        if(this.x != null) {
-            return this.x;
-        } else {
-            return 0.0;
-        }
-    }
-
-    public Double getY() {
-        if(this.y != null) {
-            return this.y;
-        } else {
-            return 0.0;
-        }
-    }
-
-    public Double getArea() {
-        if(this.area != null) {
-            return this.area;
-        } else {
-            return 0.0;
-        }
-    }
-
-    public int getPipeline() {
-        return this.pipeline;
-    }
-
-    public boolean isRefreshed() {
-        return this.isRefreshed;
-    }
-
-    public Double getDistance() {
-        double val;
-        // inches
-        Double h2 = 96.0;
-        Double h1 = 30.0;
-        Double a1 = 1.0; // 0.258
-        Double a2 = this.y;
-        // return (h2 - h1) / Math.tan(a1 + a2);
-        double dist = (h2 - h1) / (Math.tan((a1 + a2) * (Math.PI / 180)));
-        if(isTargetFound()) {
-            if(dist > 0) {
-                val = (double) Math.ceil((dist / 1000.0)) * 1000.0;
-                if(Math.abs(val) < 1) this.previousDist = val;
-            } else {
-                if(this.previousDist != null){
-                    val = this.previousDist;
-                } else {
-                    val = 0;
-                }
-            }
-            return val;
-        } else {
-            return 0.0;
-        }
-    }
-
-    public Double getTargetDistance() {
-        return this.targetDistance;
-    }
-
-    public boolean isTargetFound() {
-        return this.targetFound;
-    }
-
-    public boolean isAligned() {
-        return this.aligned;
-    }
-
-    public Double calculateDistance() {
-        return getDistance() * 10.0;
-    }
-
     //? Gyro
     public void resetGyro() {
     	navx.zeroYaw();
@@ -361,14 +224,6 @@ public class Drivetrain extends SubsystemBase {
     }
 
     //? Trajectory
-
-    public void setDriveStates(TrapezoidProfile.State left, TrapezoidProfile.State right) {
-        leftDrivePID.setSetpoint(left.position);
-        rightDrivePID.setSetpoint(right.position);
-        this.leftDriveMaster.set(ControlMode.Position, leftDrivePID.getSetpoint());
-        this.rightDriveMaster.set(ControlMode.Position, rightDrivePID.getSetpoint());
-    }
-
     public Double getHeading() {
         return Math.IEEEremainder(-navx.getAngle(), 360);
     }
@@ -438,8 +293,6 @@ public class Drivetrain extends SubsystemBase {
     public void dashboard() {
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
         tab.add(this);
-        tab.addNumber("Target-Distance", this::getTargetDistance);
-        tab.addNumber("Distance", this::getDistance);
         tab.addNumber("Heading", this::getHeading);
         tab.addNumber("Left-Dist-Meters", this::getLeftDistanceMeters);
         tab.addNumber("Right-Dist-Meters", this::getRightDistanceMeters);
@@ -462,11 +315,6 @@ public class Drivetrain extends SubsystemBase {
         leftDriveTempWidget = tab.add("Left Drive Temp", 0.0).withWidget(BuiltInWidgets.kGraph).getEntry();
         rightDriveMasterTempWidget = tab.add("Right Drive Master Temp", 0.0).withWidget(BuiltInWidgets.kGraph).getEntry();
         rightDriveTempWidget = tab.add("Right Drive Temp", 0.0).withWidget(BuiltInWidgets.kGraph).getEntry();
-
-        ShuffleboardTab tab2 = Shuffleboard.getTab("Limelight");
-        tab2.addNumber("X Error", this::getX);
-        tab2.addNumber("Y Error", this::getY);
-        tab2.addNumber("Area", this::getArea);
     }
 
     @Override
@@ -482,19 +330,6 @@ public class Drivetrain extends SubsystemBase {
             // System.out.println("Running");
             this.targetHeading = getHeading();
         }
-        // this.targetHeading = getHeading();
-
-        this.x = table.getEntry("tx").getDouble(0.0);
-        this.y = table.getEntry("ty").getDouble(0.0);
-        this.area = table.getEntry("ta").getDouble(0.0);
-        this.targetFound = table.getEntry("tv").getNumber(0).intValue() == 1 ? true : false;
-        this.pipeline = table.getEntry("pipeline").getNumber(0).intValue();
-        this.aligned = Math.abs(x) < 0.1 ? true : false;
-        this.isRefreshed = this.x != previousX || this.y != previousY ? true : false;
-        this.previousX = this.x;
-        this.previousY = this.y;
-        
-        // this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
 
         SmartDashboard.putNumber("Heading", this.getHeading());
 
