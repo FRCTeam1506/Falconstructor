@@ -44,8 +44,8 @@
 
 | Manip | ID |
 | --- | --- |
-| Left Roller | X |
-| Right Roller | X |
+| Left Roller | 5 |
+| Right Roller | 10 |
 
 --------------------------
 
@@ -53,7 +53,7 @@
 
 | Manip | ID |
 | --- | --- |
-| Rollers | X |
+| Rollers | 11 |
 
 --------------------------
 
@@ -61,12 +61,12 @@
 
 | Side | ID |
 | --- | --- |
-| Left | X |
-| Right | X |
+| Left | 2 |
+| Right | 13 |
 
 ## Climber
 
 | Side | ID |
 | --- | --- |
-| Left | X |
-| Right | X |
+| Left | 3 |
+| Right | 12 |
