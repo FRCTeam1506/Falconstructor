@@ -49,7 +49,7 @@ public class VertIndexer extends SubsystemBase {
 
     @Override
     public void periodic() {
-        this.indexerVoltageWidget.setNumber(this.indexer.getStatorCurrent());
+        // this.indexerVoltageWidget.setNumber(this.indexer.getStatorCurrent());
     }
 
 }

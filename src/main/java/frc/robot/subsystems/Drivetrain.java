@@ -498,17 +498,17 @@ public class Drivetrain extends SubsystemBase {
 
         SmartDashboard.putNumber("Heading", this.getHeading());
 
-        //? Update Volts
-        leftDriveMasterVoltageWidget.setNumber(this.leftDriveMaster.getStatorCurrent());
-        leftDriveVoltageWidget.setNumber(this.leftDrive.getStatorCurrent());
-        rightDriveMasterVoltageWidget.setNumber(this.rightDriveMaster.getStatorCurrent());
-        rightDriveVoltageWidget.setNumber(this.rightDrive.getStatorCurrent());
+        // //? Update Volts
+        // leftDriveMasterVoltageWidget.setNumber(this.leftDriveMaster.getStatorCurrent());
+        // leftDriveVoltageWidget.setNumber(this.leftDrive.getStatorCurrent());
+        // rightDriveMasterVoltageWidget.setNumber(this.rightDriveMaster.getStatorCurrent());
+        // rightDriveVoltageWidget.setNumber(this.rightDrive.getStatorCurrent());
 
-        //? Update Temp in C
-        leftDriveMasterTempWidget.setNumber(this.leftDriveMaster.getTemperature());
-        leftDriveTempWidget.setNumber(this.leftDrive.getTemperature());
-        rightDriveMasterTempWidget.setNumber(this.rightDriveMaster.getTemperature());
-        rightDriveTempWidget.setNumber(this.rightDrive.getTemperature());
+        // //? Update Temp in C
+        // leftDriveMasterTempWidget.setNumber(this.leftDriveMaster.getTemperature());
+        // leftDriveTempWidget.setNumber(this.leftDrive.getTemperature());
+        // rightDriveMasterTempWidget.setNumber(this.rightDriveMaster.getTemperature());
+        // rightDriveTempWidget.setNumber(this.rightDrive.getTemperature());
 
         // Shuffleboard.getTab("Drivetrain").addNumber("Max Temp", () -> Math.max(Math.max(this.leftDriveMaster.getTemperature(), this.leftDrive.getTemperature()), Math.max(this.rightDriveMaster.getTemperature(), this.rightDrive.getTemperature())));
     }
