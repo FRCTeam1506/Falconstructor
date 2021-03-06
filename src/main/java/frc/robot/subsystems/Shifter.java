@@ -11,7 +11,7 @@ public class Shifter extends SubsystemBase {
     private final Solenoid shifter = new Solenoid(0);
 
     public Shifter() {
-        dashboard();
+        // dashboard();
     }
 
     public void setToLowGear() {

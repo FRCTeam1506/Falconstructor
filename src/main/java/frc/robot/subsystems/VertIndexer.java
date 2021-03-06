@@ -24,7 +24,7 @@ public class VertIndexer extends SubsystemBase {
         this.indexer.setInverted(false);
         this.indexer.configSupplyCurrentLimit(supplyCurrentLimitConfiguration);
 
-        dashboard();
+        // dashboard();
     }
 
     public void up() {

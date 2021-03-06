@@ -20,7 +20,7 @@ public class Intake extends SubsystemBase {
         this.intake.configFactoryDefault();
         this.intake.setInverted(false);
 
-        dashboard();
+        // dashboard();
     }
 
     public void intakeFwd() {

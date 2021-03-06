@@ -54,7 +54,7 @@ public class Shooter extends SubsystemBase {
         this.shooter2.config_kD(0, Constants.Shooter.kD);
         this.shooter2.config_kF(0, Constants.Shooter.kF);
 
-        dashboard();
+        // dashboard();
     }
 
     private void setPower(Double pwr) {

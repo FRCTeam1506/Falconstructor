@@ -43,7 +43,7 @@ public class Climber extends SubsystemBase {
 
         DEFAULT();
         reset();
-        dashboard();
+        // dashboard();
     }
 
     public void DEFAULT() {
