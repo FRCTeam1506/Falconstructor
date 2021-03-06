@@ -99,7 +99,7 @@ public class Shooter extends SubsystemBase {
         tab.addNumber("Error", () -> this.shooter1.getClosedLoopError());
 
         voltageWidget = tab.add("Voltage", 0.0).withWidget("Graph").getEntry();
-        velocityWidget = tab.add("Velocity", 0.0).withWidget(BuiltInWidgets.kGraph).getEntry();
+        velocityWidget = tab.add("Velocity2", 0.0).withWidget(BuiltInWidgets.kGraph).getEntry();
     }
 
     @Override
